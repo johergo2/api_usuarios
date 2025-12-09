@@ -8,4 +8,23 @@ Contraseña: johergo919
 
 
 
+Despues de ingresar a Render, vamos al dashboard: https://dashboard.render.com/
+
+CREACIÓN BASE DE DATOS
+
+Name: db_api_usuarios
+Database: db_api_usuarios
+User: usuario_api
+Region: Ohio (US East)
+
+Internal Database URL: postgresql://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a/db_api_usuarios
+                       postgresql://usuario_api:password@host:5432/db_api_usuarios
+
+
+External Database URL: postgresql://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a.ohio-postgres.render.com/db_api_usuarios
+
+En el archivo del PC C:\Desarrollos\API_Usuarios\app\database.py modificar DATABASE_URL = "postgresql+asyncpg://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a.ohio-postgres.render.com/db_api_usuarios"
+con el valor de External Database URL (adicionar +asyncpg)
+
+
 
