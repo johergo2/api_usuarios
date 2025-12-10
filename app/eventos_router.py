@@ -43,8 +43,8 @@ async def obtener_evento(id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/eventos")
 async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
     query = text("""
-        INSERT INTO eventos (nombre, descripcion, fecha_evento, fecha_fin, estado)
-        VALUES (:nombre, :descripcion, :fecha_inicio, :fecha_fin, :estado)
+        INSERT INTO eventos (nombre, descripcion, fecha_evento, hora_evento, lugar, tipo, estado)
+        VALUES (:nombre, :descripcion, :fecha_evento, :hora_evento, :lugar, :tipo, :estado)
         RETURNING *;
     """)
 
@@ -64,8 +64,10 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
         UPDATE eventos
         SET nombre = :nombre,
             descripcion = :descripcion,
-            fecha_inicio = :fecha_inicio,
-            fecha_fin = :fecha_fin,
+            fecha_evento = :fecha_evento,
+            hora_evento = :hora_evento,
+            lugar = :lugar,
+            tipo = :tipo,
             estado = :estado,
             fecha_actualizacion = CURRENT_TIMESTAMP
         WHERE id = :id
