@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
+from datetime import datetime
 
 router = APIRouter()
 
@@ -42,6 +43,12 @@ async def obtener_evento(id: int, db: AsyncSession = Depends(get_db)):
 # ============================================
 @router.post("/eventos")
 async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
+    # Convertir fecha_evento del formato DD/MM/YYYY a YYYY-MM-DD si viene así
+    if "/" in evento["fecha_evento"]:
+        evento["fecha_evento"] = datetime.strptime(
+            evento["fecha_evento"], "%d/%m/%Y"
+        ).strftime("%Y-%m-%d")    
+        
     query = text("""
         INSERT INTO eventos (nombre, descripcion, fecha_evento, hora_evento, lugar, tipo, estado)
         VALUES (:nombre, :descripcion, :fecha_evento, :hora_evento, :lugar, :tipo, :estado)
