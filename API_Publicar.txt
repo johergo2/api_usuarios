@@ -37,6 +37,13 @@ En el archivo del PC C:\Desarrollos\API_Usuarios\app\database.py modificar DATAB
 con el valor de External Database URL (adicionar +asyncpg)
 
 
+-- Subir los cambios a GitHub desde C:\Desarrollos\API_Usuarios\app, luego Render identifica los cambios y realiza el deploy automáticamente
+git add .
+git commit -m "Ajuste de CORS en main.py"
+git push origin main
+
+
+
 http://localhost:8000/docs
 Aquí está la documentación de la API
 
