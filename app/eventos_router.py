@@ -44,14 +44,11 @@ async def obtener_evento(id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/eventos")
 async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
     # Convertir fecha_evento del formato DD/MM/YYYY a YYYY-MM-DD si viene así
-    if "/" in evento["fecha_evento"]:
-        evento["fecha_evento"] = datetime.strptime(
-            evento["fecha_evento"], "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")    
-        
+ 
+
     query = text("""
-        INSERT INTO eventos (nombre, descripcion, fecha_evento, hora_evento, lugar, tipo, estado)
-        VALUES (:nombre, :descripcion, :fecha_evento, :hora_evento, :lugar, :tipo, :estado)
+        INSERT INTO eventos (nombre, descripcion, hora_evento, lugar, tipo, estado)
+        VALUES (:nombre, :descripcion, :hora_evento, :lugar, :tipo, :estado)
         RETURNING *;
     """)
 
@@ -71,7 +68,6 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
         UPDATE eventos
         SET nombre = :nombre,
             descripcion = :descripcion,
-            fecha_evento = :fecha_evento,
             hora_evento = :hora_evento,
             lugar = :lugar,
             tipo = :tipo,
