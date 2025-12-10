@@ -43,7 +43,7 @@ async def obtener_evento(id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/eventos")
 async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
     query = text("""
-        INSERT INTO eventos (nombre, descripcion, fecha_inicio, fecha_fin, estado)
+        INSERT INTO eventos (nombre, descripcion, fecha_evento, fecha_fin, estado)
         VALUES (:nombre, :descripcion, :fecha_inicio, :fecha_fin, :estado)
         RETURNING *;
     """)
