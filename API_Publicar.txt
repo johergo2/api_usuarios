@@ -6,7 +6,7 @@ https://render.com/ => En esta página se inicia sesión con una cuenta de Googl
 Usuario: johergo2 (Usuario GitHub)
 Contraseña: johergo919
 
-
+En la carpeta "C:\Desarrollos\API_Usuarios" está el código fuente del API y se conecta con GitHub
 
 Despues de ingresar a Render, vamos al dashboard: https://dashboard.render.com/
 
@@ -23,8 +23,44 @@ Internal Database URL: postgresql://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5
 
 External Database URL: postgresql://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a.ohio-postgres.render.com/db_api_usuarios
 
+Usuario: usuario_api
+Contraseña: qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5
+
+-- Activar entorno virtual python:
+En CMD ejecuta: .venv\Scripts\activate
+-- Para ejecutar el archivo "C:\Desarrollos\API_Usuarios\requeriments.txt"
+pip install -r requirements.txt --verbose
+
+
+
 En el archivo del PC C:\Desarrollos\API_Usuarios\app\database.py modificar DATABASE_URL = "postgresql+asyncpg://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a.ohio-postgres.render.com/db_api_usuarios"
 con el valor de External Database URL (adicionar +asyncpg)
 
 
+http://localhost:8000/docs
+Aquí está la documentación de la API
+
+-- Endpoints
+http://localhost:8000/api/usuarios
+GET /api/usuarios
+GET /api/usuarios/nombre/Carlos López
+GET /api/usuarios/1
+
+
+Esta es la API pública: https://api-usuarios-f1im.onrender.com
+PAra consultar los usuarios: https://api-usuarios-f1im.onrender.com/api/usuarios
+Para consultar usuario por nombre: https://api-usuarios-f1im.onrender.com/api/usuarios/nombre/Jorge Gomez 3
+
+
+Se instaló Node.js
+Se creó el proyecto calificaciones (no puede tener mayúsculas)
+Se creó el proyecto Vite + React + TypeScript
+Se creó la URL: Local:   http://localhost:5173/
+
+-- Carpeta donde se creó el proyecto Vite: C:\Calificaciones
+
+-- Instalar dependencias : En CMD ejecutar C:\Calificaciones>npm install
+-- Reiniciar : En CMD ejecutar C:\Calificaciones>npm run dev
+
+-- Para ejecutar la pantalla de Login: http://localhost:5173/
 

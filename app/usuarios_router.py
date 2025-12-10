@@ -32,7 +32,7 @@ async def obtener_usuario(id: int, db: AsyncSession = Depends(get_db)):
     return row
 
 # ============================================
-# 2. Obtener usuario por nombre (coincidencia exacta)
+# 3. Obtener usuario por nombre (coincidencia exacta)
 # ============================================
 @router.get("/usuarios/nombre/{nombre}")
 async def obtener_usuario_por_nombre(nombre: str, db: AsyncSession = Depends(get_db)):
@@ -45,5 +45,30 @@ async def obtener_usuario_por_nombre(nombre: str, db: AsyncSession = Depends(get
             status_code=404,
             detail=f"No existe un usuario con el nombre '{nombre}'"
         )
+    
+
+# ============================================
+# 4. Obtener login de usuario por nombre (coincidencia exacta)
+# ============================================
+@router.post("/usuarios/login")
+async def login(datos: dict, db: AsyncSession = Depends(get_db)):
+    nombre = datos.get("nombre")
+    contrasena = datos.get("contrasena")
+
+    if not nombre or not contrasena:
+        raise HTTPException(status_code=400, detail="Nombre y contraseña son obligatorios")
+
+    query = text("SELECT * FROM usuarios WHERE nombre = :nombre")
+    result = await db.execute(query, {"nombre": nombre})
+    usuario = result.mappings().first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="El usuario no existe")
+
+    if usuario["contrasena"] != contrasena:
+        raise HTTPException(status_code=401, detail="Contraseña incorrecta")
+
+    return {"message": "Acceso concedido", "usuario": usuario}
+
 
     return row
