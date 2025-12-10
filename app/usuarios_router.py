@@ -5,35 +5,41 @@ from app.database import SessionLocal
 
 router = APIRouter()
 
+# Obtener sesión de BD
 async def get_db():
     async with SessionLocal() as session:
         yield session
 
-# ==============================
+
+# =======================================================
 # 1. Obtener todos los usuarios
-# ==============================
+# =======================================================
 @router.get("/usuarios")
 async def listar_usuarios(db: AsyncSession = Depends(get_db)):
-    query = text("SELECT * FROM usuarios order by id")
+    query = text("SELECT * FROM usuarios ORDER BY id")
     result = await db.execute(query)
     rows = result.mappings().all()
     return {"usuarios": rows}
 
-# ==============================
-# 2. Obtener un usuario por ID
-# ==============================
+
+# =======================================================
+# 2. Obtener usuario por ID
+# =======================================================
 @router.get("/usuarios/{id}")
 async def obtener_usuario(id: int, db: AsyncSession = Depends(get_db)):
     query = text("SELECT * FROM usuarios WHERE id = :id")
     result = await db.execute(query, {"id": id})
     row = result.mappings().first()
+
     if not row:
         raise HTTPException(status_code=404, detail="Usuario con id no encontrado")
+
     return row
 
-# ============================================
+
+# =======================================================
 # 3. Obtener usuario por nombre (coincidencia exacta)
-# ============================================
+# =======================================================
 @router.get("/usuarios/nombre/{nombre}")
 async def obtener_usuario_por_nombre(nombre: str, db: AsyncSession = Depends(get_db)):
     query = text("SELECT * FROM usuarios WHERE nombre = :nombre")
@@ -43,20 +49,25 @@ async def obtener_usuario_por_nombre(nombre: str, db: AsyncSession = Depends(get
     if not row:
         raise HTTPException(
             status_code=404,
-            detail=f"No existe un usuario con el nombre '{nombre}'"
+            detail=f"No existe un usuario con el nombre '{nombre}'",
         )
-    
 
-# ============================================
-# 4. Obtener login de usuario por nombre (coincidencia exacta)
-# ============================================
+    return row
+
+
+# =======================================================
+# 4. Login por nombre y contraseña
+# =======================================================
 @router.post("/usuarios/login")
 async def login(datos: dict, db: AsyncSession = Depends(get_db)):
     nombre = datos.get("nombre")
     contrasena = datos.get("contrasena")
 
     if not nombre or not contrasena:
-        raise HTTPException(status_code=400, detail="Nombre y contraseña son obligatorios")
+        raise HTTPException(
+            status_code=400,
+            detail="Nombre y contraseña son obligatorios"
+        )
 
     query = text("SELECT * FROM usuarios WHERE nombre = :nombre")
     result = await db.execute(query, {"nombre": nombre})
@@ -68,7 +79,7 @@ async def login(datos: dict, db: AsyncSession = Depends(get_db)):
     if usuario["contrasena"] != contrasena:
         raise HTTPException(status_code=401, detail="Contraseña incorrecta")
 
-    return {"message": "Acceso concedido", "usuario": usuario}
-
-
-    return row
+    return {
+        "message": "Acceso concedido",
+        "usuario": usuario
+    }
