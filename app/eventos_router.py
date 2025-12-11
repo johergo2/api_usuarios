@@ -47,8 +47,8 @@ async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
  
 
     query = text("""
-        INSERT INTO eventos (nombre, descripcion, hora_evento, lugar, tipo, estado)
-        VALUES (:nombre, :descripcion, :hora_evento, :lugar, :tipo, :estado)
+        INSERT INTO eventos (nombre, descripcion, lugar, estado)
+        VALUES (:nombre, :descripcion, :lugar, :estado)
         RETURNING *;
     """)
 
