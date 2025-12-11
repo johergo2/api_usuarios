@@ -11,6 +11,22 @@ async def get_db():
     async with SessionLocal() as session:
         yield session
 
+def normalizar_fecha(fecha):
+    """Convierte una fecha DD/MM/YYYY o '' a YYYY-MM-DD o None."""
+    if not fecha or fecha == "":
+        return None
+
+    # Si ya viene en formato YYYY-MM-DD, retornar directo
+    if len(fecha) == 10 and fecha[4] == '-' and fecha[7] == '-':
+        return fecha
+
+    # Si viene en DD/MM/YYYY, convertir
+    try:
+        dia, mes, anio = fecha.split("/")
+        return f"{anio}-{mes}-{dia}"
+    except:
+        return None
+
 
 # ============================================
 # 1. Listar eventos
@@ -44,7 +60,7 @@ async def obtener_evento(id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/eventos")
 async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
     # Convertir fecha_evento del formato DD/MM/YYYY a YYYY-MM-DD si viene así
- 
+    evento["fecha_evento"] = normalizar_fecha(evento.get("fecha_evento"))
 
     query = text("""
         INSERT INTO eventos (nombre, descripcion, fecha_evento, lugar, estado)
@@ -64,6 +80,10 @@ async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
 # ============================================
 @router.put("/eventos/{id}")
 async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
+
+    datos["fecha_evento"] = normalizar_fecha(datos.get("fecha_evento"))
+    datos["id"] = id
+
     query = text("""
         UPDATE eventos
         SET nombre = :nombre,
