@@ -47,8 +47,8 @@ async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
  
 
     query = text("""
-        INSERT INTO eventos (nombre, descripcion, lugar, estado)
-        VALUES (:nombre, :descripcion, :lugar, :estado)
+        INSERT INTO eventos (nombre, descripcion, fecha_evento, lugar, estado)
+        VALUES (:nombre, :descripcion, :fecha_evento, :lugar, :estado)
         RETURNING *;
     """)
 
@@ -67,7 +67,8 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
     query = text("""
         UPDATE eventos
         SET nombre = :nombre,
-            descripcion = :descripcion,            
+            descripcion = :descripcion,   
+            fecha_evento = :fecha_evento         
             lugar = :lugar,            
             estado = :estado,
             fecha_actualizacion = CURRENT_TIMESTAMP
