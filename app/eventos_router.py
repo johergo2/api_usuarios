@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
-from datetime import datetime
+from datetime import datetime, date
 
 router = APIRouter()
 
@@ -22,8 +22,8 @@ def normalizar_fecha(fecha):
 
     # Si viene en DD/MM/YYYY, convertir
     try:
-        dia, mes, anio = fecha.split("/")
-        return f"{anio}-{mes}-{dia}"
+        d, m, y = fecha.split("/")
+        return f"{y}-{m}-{d}"
     except:
         return None
 
@@ -60,7 +60,17 @@ async def obtener_evento(id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/eventos")
 async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
     # Convertir fecha_evento del formato DD/MM/YYYY a YYYY-MM-DD si viene así
-    evento["fecha_evento"] = normalizar_fecha(evento.get("fecha_evento"))
+    fecha = normalizar_fecha(evento.get("fecha_evento"))
+
+    if fecha: 
+        try:
+            evento["fecha_evento"] = datetime.strptime(fecha, "%Y-%m-%d").date()
+        except:
+            raise HTTPException(status_code=400, detail="Formato incorrecto de fecha_evento")
+    else:
+        evento["fecha_evento"] = None
+
+    
 
     query = text("""
         INSERT INTO eventos (nombre, descripcion, fecha_evento, lugar, estado)
@@ -81,14 +91,23 @@ async def crear_evento(evento: dict, db: AsyncSession = Depends(get_db)):
 @router.put("/eventos/{id}")
 async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
 
-    datos["fecha_evento"] = normalizar_fecha(datos.get("fecha_evento"))
+    fecha = normalizar_fecha(datos.get("fecha_evento"))
+
+    if fecha:
+        try:
+            datos["fecha_evento"] = datetime.strptime(fecha, "%Y-%m-%d").date()
+        except:
+            raise HTTPException(status_code=400, detail="Formato incorrecto de fecha_evento")
+    else:
+        datos["fecha_evento"] = None
+
     datos["id"] = id
 
     query = text("""
         UPDATE eventos
         SET nombre = :nombre,
             descripcion = :descripcion,   
-            fecha_evento = :fecha_evento         
+            fecha_evento = :fecha_evento,        
             lugar = :lugar,            
             estado = :estado,
             fecha_actualizacion = CURRENT_TIMESTAMP
@@ -96,7 +115,7 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
         RETURNING *;
     """)
 
-    datos["id"] = id
+  
     result = await db.execute(query, datos)
     evento = result.mappings().first()
 

@@ -10,7 +10,7 @@ En la carpeta "C:\Desarrollos\API_Usuarios" está el código fuente del API y se
 
 Despues de ingresar a Render, vamos al dashboard: https://dashboard.render.com/
 
-CREACIÓN BASE DE DATOS
+CREACIÓN BASE DE DATOS EN RENDER
 
 Name: db_api_usuarios
 Database: db_api_usuarios
@@ -29,7 +29,7 @@ Contraseña: qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5
 
 
 -- Activar entorno virtual python:
-En CMD ejecuta: .venv\Scripts\activate
+En CMD ejecuta: C:\Desarrollos\API_Usuarios\.venv\Scripts\activate
 -- Para ejecutar el archivo "C:\Desarrollos\API_Usuarios\requeriments.txt"
 pip install -r requirements.txt --verbose
 
@@ -37,8 +37,12 @@ pip install -r requirements.txt --verbose
 -- Activar uvicorns para poder ejecutar las API desde el PC (localmente)
 Abrir CMD y ubicarse en "C:\Desarrollos\API_Usuarios"
 ejecuta: .venv\Scripts\activate
-ejecuta: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+ejecuta: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000  -- Con esto puedo ejecutar la API con URL Localhost
 
+
+-- Carpeta donde se creó el proyecto Vite: C:\Calificaciones
+-- Instalar dependencias : En CMD ejecutar C:\Calificaciones>npm install
+-- Reiniciar : En CMD ejecutar C:\Calificaciones>npm run dev
 
 
 
@@ -62,11 +66,11 @@ GET /api/usuarios
 GET /api/usuarios/nombre/Carlos López
 GET /api/usuarios/1
 
-
+-- PANTALLA USUARIOS
 Esta es la API pública: https://api-usuarios-f1im.onrender.com
 PAra consultar los usuarios: https://api-usuarios-f1im.onrender.com/api/usuarios
 Para consultar usuario por nombre: https://api-usuarios-f1im.onrender.com/api/usuarios/nombre/Jorge Gomez 3
-https://api-usuarios-f1im.onrender.com/api/usuarios/nombre/Jorge%20Gomez%203
+
 
 
 Se instaló Node.js
@@ -79,5 +83,11 @@ Se creó la URL: Local:   http://localhost:5173/
 -- Instalar dependencias : En CMD ejecutar C:\Calificaciones>npm install
 -- Reiniciar : En CMD ejecutar C:\Calificaciones>npm run dev
 
--- Para ejecutar la pantalla de Login: http://localhost:5173/
+-- OJO: Para ejecutar la pantalla de Login: http://localhost:5173/
+
+-- PANTALLA CREACION EVENTOS
+https://api-usuarios-f1im.onrender.com/api/eventos
+https://api-usuarios-f1im.onrender.com/api/eventos/{id}
+https://api-usuarios-f1im.onrender.com/api/usuarios
+
 
