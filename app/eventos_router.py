@@ -67,10 +67,8 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
     query = text("""
         UPDATE eventos
         SET nombre = :nombre,
-            descripcion = :descripcion,
-            hora_evento = :hora_evento,
-            lugar = :lugar,
-            tipo = :tipo,
+            descripcion = :descripcion,            
+            lugar = :lugar,            
             estado = :estado,
             fecha_actualizacion = CURRENT_TIMESTAMP
         WHERE id = :id
