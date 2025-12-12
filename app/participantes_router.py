@@ -43,6 +43,8 @@ async def obtener_participante(id: int, db: AsyncSession = Depends(get_db)):
 # ============================================
 @router.post("/participantes")
 async def crear_participante(participante: dict, db: AsyncSession = Depends(get_db)):
+
+    print("📌 Datos recibidos en crear_participante:", participante)
     
     query = text("""
         INSERT INTO participantes (cedula, nombre, tipo, observacion)
