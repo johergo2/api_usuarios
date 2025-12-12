@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.usuarios_router import router as usuarios_router
 from app.eventos_router import router as eventos_router
-from app.eventos_router import router as participantes_router
+from app.participantes_router import router as participantes_router
 
 app = FastAPI(
     title="API Usuarios",
