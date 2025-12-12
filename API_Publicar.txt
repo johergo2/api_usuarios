@@ -49,12 +49,43 @@ ejecuta: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000  -- Con esto p
 En el archivo del PC C:\Desarrollos\API_Usuarios\app\database.py modificar DATABASE_URL = "postgresql+asyncpg://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a.ohio-postgres.render.com/db_api_usuarios"
 con el valor de External Database URL (adicionar +asyncpg)
 
+-- Para publicar en GitHub mi proyecto
+Se debe ingresar a CMD a la carpeta C:\Calificaciones
+Ejecutar: git init
+Verificar con: git status (debe listar todos los archivos de la carpeta)
+Agregar todos los archivos: git add .
+Crear el commit: git commit -m "Crear proyecto Calificaciones"
+Ingresar a GitHub: https://github.com/ (Usuario: johergo2 (Usuario GitHub) Contraseña: johergo919)
+Click en New Repository
+Colocar nombre al repositorio: calificaciones-app
+No agregar README
+Click en Create Repository
+Conecta el repositorio ejecutando desde C:\Calificaciones (CMD o VSCode): git remote add origin https://github.com/johergo2/calificaciones-app.git
+Verificar la conexión: git remote -v (debe mostrar la URL con (fetch y push)
+Ejecutar para renombrar la Rama Master por main (así lo requiere GitHub): git branch -M main
+Ejecutar para subir los archivos del primer commit a GitHub: git push -u origin main
+Ingresar a Render y Click en New => Static Site
+Selecciona tu repositorio del frontend creado en GitHub (calificaciones-app)
+En Branch: main
+En Buid Command: npm install && npm run build
+En Publish Directory: dist
+Click en: Deploy Static Site
+Render genera la URL: https://calificaciones-app.onrender.com (esta es la pantalla de Login)
+
 
 -- Subir los cambios a GitHub desde C:\Desarrollos\API_Usuarios\app, luego Render identifica los cambios y realiza el deploy automáticamente
 git add .
 git commit -m "Ajuste de CORS en main.py"
 git push origin main
 
+
+-- Para que el BackEnd se ejecute en mi PC
+uvicorn app.main:app --reload (esto se ejecuta en CMD)
+Así las URL de las APIs serían: http://localhost:8000/api/eventos
+
+-- Para que el BackEnd se ejecute en el servidor Render
+Render ejecuta automáticamente: uvicorn app.main:app --host 0.0.0.0 --port 10000
+Así las URL de las APIs serían: https://api-usuarios-f1im.onrender.com/api/eventos
 
 
 http://localhost:8000/docs
