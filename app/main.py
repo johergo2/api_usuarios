@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.usuarios_router import router as usuarios_router
 from app.eventos_router import router as eventos_router
 from app.participantes_router import router as participantes_router
+from app.categorias import router as categorias
 from app.evento_categoria_router import router as evento_categoria_router
 
 app = FastAPI(
@@ -24,4 +25,5 @@ app.add_middleware(
 app.include_router(usuarios_router, prefix="/api")
 app.include_router(eventos_router, prefix="/api")
 app.include_router(participantes_router, prefix="/api")
+app.include_router(categorias, prefix="/api")
 app.include_router(evento_categoria_router, prefix="/api")
