@@ -26,7 +26,7 @@ async def listar_categorias(db: AsyncSession = Depends(get_db)
             id,
             categoria
         FROM categorias
-        ORDER BY c.categoria
+        ORDER BY categoria
     """)
 
     result = await db.execute(query)
