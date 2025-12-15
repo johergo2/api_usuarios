@@ -62,7 +62,7 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
           raise HTTPException(status_code=404, detail="Evento no encontrado")
         
 
-        query = text("""
+        insert_query = text("""
         INSERT INTO eventos_categorias (evento_id, categoria_id)
         VALUES (:evento_id, :categoria_id)
         ON CONFLICT DO NOTHING""")
