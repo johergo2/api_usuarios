@@ -44,12 +44,14 @@ ejecuta: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000  -- Con esto p
 -- Instalar dependencias : En CMD ejecutar C:\Calificaciones>npm install
 -- Reiniciar : En CMD ejecutar C:\Calificaciones>npm run dev
 
-
+-- Para abrir VSCode desde la carpeta del BackEnd: 
+Abrir CMD
+cd C:\Desarrollos\API_Usuarios\code .
 
 En el archivo del PC C:\Desarrollos\API_Usuarios\app\database.py modificar DATABASE_URL = "postgresql+asyncpg://usuario_api:qLOEsZzJHzqjNBEQDuwEjGXL2dGU4Aq5@dpg-d4s5b77diees73dkljd0-a.ohio-postgres.render.com/db_api_usuarios"
 con el valor de External Database URL (adicionar +asyncpg)
 
--- Para publicar en GitHub mi proyecto
+-- Para publicar en GitHub mi proyecto Front
 Se debe ingresar a CMD a la carpeta C:\Calificaciones
 Ejecutar: git init
 Verificar con: git status (debe listar todos los archivos de la carpeta)
