@@ -13,8 +13,33 @@ async def get_db():
         yield session
 
 
+
 # ============================================
-# 1. Listar categorías de un evento
+# 1. Listar categorías
+# GET /api/categorias
+# ============================================
+@router.get("/eventos/categorias")
+async def listar_categorias(
+    evento_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    query = text("""
+        SELECT
+            id,
+            categoria
+        FROM categorias
+        ORDER BY c.categoria
+    """)
+
+    result = await db.execute(query)
+    rows = result.mappings().all()
+
+    return {"categorias": rows}
+
+
+
+# ============================================
+# 2. Listar categorías de un evento
 # GET /api/eventos/{evento_id}/categorias
 # ============================================
 @router.get("/eventos/{evento_id}/categorias")
