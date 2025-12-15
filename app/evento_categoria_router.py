@@ -41,23 +41,48 @@ async def listar_categorias_evento(
     }
 
 # ============================================
-# 2. Crear categorias_evento
+# 2. Asignar categorias a un evento
 # ============================================
 @router.post("/eventos/{evento_id}/categorias")
-async def crear_categorias_evento(cat_evento: dict, db: AsyncSession = Depends(get_db)):
+async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession = Depends(get_db)):
         
+        categorias = data.get("categorias")
+
+        if not categorias or not isinstance(categorias, list):
+            raise HTTPException(
+                status_code=400,
+               detail="Debe enviar una lista de categorías"
+        )
+
+        # Validar que el evento exista
+        evento_query = text("SELECT id FROM eventos WHERE id = :id")
+        evento = await db.execute(evento_query, {"id": evento_id})
+
+        if not evento.first():
+          raise HTTPException(status_code=404, detail="Evento no encontrado")
+        
+
         query = text("""
         INSERT INTO eventos_categorias (evento_id, categoria_id)
         VALUES (:evento_id, :categoria_id)
-        RETURNING *;
-    """)
-        
-        result = await db.execute(query, cat_evento)
-        nuevo_evento = result.mappings().first()
-        await db.commit()
+        ON CONFLICT DO NOTHING""")
 
-        return nuevo_evento
+        for categoria_id in categorias:
+            await db.execute(
+                insert_query,
+                {
+                    "evento_id": evento_id,
+                    "categoria_id": categoria_id
+                }
+            )       
 
+            await db.commit()
+
+            return {
+                "message": "Categorías asignadas correctamente",
+                "evento_id": evento_id,
+                "categorias": categorias
+            }
 
 # ============================================
 # 3. Actualizar evento
