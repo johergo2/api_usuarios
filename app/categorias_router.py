@@ -18,10 +18,8 @@ async def get_db():
 # 1. Listar categorías
 # GET /api/categorias
 # ============================================
-@router.get("/eventos/categorias")
-async def listar_categorias(
-    evento_id: int,
-    db: AsyncSession = Depends(get_db)
+@router.get("/categorias")
+async def listar_categorias(db: AsyncSession = Depends(get_db)
 ):
     query = text("""
         SELECT
