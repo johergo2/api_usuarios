@@ -46,9 +46,9 @@ async def listar_categorias_evento(
 @router.post("/eventos/{evento_id}/categorias")
 async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession = Depends(get_db)):
         
-        categorias = data.get("categorias")
+        categorias = data.get("categorias", [])
 
-        if not categorias or not isinstance(categorias, list):
+        if not isinstance(categorias, list):
             raise HTTPException(
                 status_code=400,
                detail="Debe enviar una lista de categorías"
@@ -61,20 +61,27 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
         if not evento.first():
           raise HTTPException(status_code=404, detail="Evento no encontrado")
         
-
-        insert_query = text("""
-        INSERT INTO eventos_categorias (evento_id, categoria_id)
-        VALUES (:evento_id, :categoria_id)
-        ON CONFLICT DO NOTHING""")
-
-        for categoria_id in categorias:
+        try:
+            # Eliminar categorías actuales
             await db.execute(
-                insert_query,
-                {
-                    "evento_id": evento_id,
-                    "categoria_id": categoria_id
-                }
-            )       
+                text("DELETE FROM eventos_categorias WHERE evento_id = :evento_id"),
+                {"evento_id": evento_id}
+            )
+
+            # Insertar nuevas categorías
+            insert_query = text("""
+                INSERT INTO eventos_categorias (evento_id, categoria_id)
+                VALUES (:evento_id, :categoria_id)
+            """)
+
+            for categoria_id in categorias:
+                await db.execute(
+                    insert_query,
+                    {
+                        "evento_id": evento_id,
+                        "categoria_id": categoria_id
+                    }
+                )
 
             await db.commit()
 
@@ -84,8 +91,14 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
                 "categorias": categorias
             }
 
+        except Exception as e:
+            await db.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
+        
+
+
 # ============================================
-# 3. Eliminar evento
+# 3. Eliminar categorias asociadas a evento
 # ============================================ 
 @router.delete("/eventos/{evento_id}/categorias/{categoria_id}")
 async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: AsyncSession = Depends(get_db)):
