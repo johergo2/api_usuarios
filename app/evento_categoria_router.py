@@ -85,32 +85,7 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
             }
 
 # ============================================
-# 3. Actualizar evento
-# ============================================
-@router.put("/eventos/{evento_id}/categorias")
-async def actualizar_categorias_evento(evento_id: int, datos: dict, db: AsyncSession = Depends(get_db)):
-     
-    datos["evento_id"] = evento_id
-
-    query = text("""
-        UPDATE eventos_categorias
-        SET categoria_id = :categoria_id
-            fecha_actualizacion = CURRENT_TIMESTAMP
-        WHERE id = :evento_id
-        RETURNING *;
-    """)
-
-    result = await db.execute(query, datos)
-    evento = result.mappings().first()
-
-    if not evento:
-        raise HTTPException(status_code=404, detail="Evento no encontrado")
-
-    await db.commit()
-    return evento   
-
-# ============================================
-# 4. Eliminar evento
+# 3. Eliminar evento
 # ============================================ 
 @router.delete("/eventos/{evento_id}/categorias/{categoria_id}")
 async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: AsyncSession = Depends(get_db)):
