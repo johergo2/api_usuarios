@@ -26,7 +26,7 @@ async def listar_categorias(db: AsyncSession = Depends(get_db)
             id,
             categoria
         FROM categorias
-        ORDER BY categoria
+        ORDER BY id
     """)
 
     result = await db.execute(query)
@@ -52,7 +52,7 @@ async def listar_categorias_evento(
         FROM eventos_categorias ec
         JOIN categorias c ON c.id = ec.categoria_id
         WHERE ec.evento_id = :evento_id
-        ORDER BY c.id
+        ORDER BY c.categoria
     """)
 
     result = await db.execute(query, {"evento_id": evento_id})
