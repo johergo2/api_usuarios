@@ -68,7 +68,7 @@ async def asignar_participante_evento(
         )
 
     insert_query = text("""
-        INSERT INTO participantes_categ_eventos
+        INSERT INTO participantes_categorias_eventos
         (cedula, evento_id, categoria_id)
         VALUES (:cedula, :evento_id, :categoria_id)
         ON CONFLICT DO NOTHING
@@ -103,7 +103,7 @@ async def categorias_participante_evento(
         SELECT
             c.id,
             c.categoria
-        FROM participantes_categ_eventos pce
+        FROM participantes_categorias_eventos pce
         JOIN categorias c ON c.id = pce.categoria_id
         WHERE pce.cedula = :cedula
           AND pce.evento_id = :evento_id
@@ -133,7 +133,7 @@ async def eliminar_categoria_participante(
     db: AsyncSession = Depends(get_db)
 ):
     query = text("""
-        DELETE FROM participantes_categ_eventos
+        DELETE FROM participantes_categorias_eventos
         WHERE cedula = :cedula
           AND evento_id = :evento_id
           AND categoria_id = :categoria_id
