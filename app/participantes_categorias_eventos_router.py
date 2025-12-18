@@ -28,7 +28,7 @@ async def listar_participaciones(
             pce.categoria_id,
             c.categoria,
             pce.fecha_creacion
-        FROM participantes_categ_eventos pce
+        FROM participantes_categorias_eventos pce
         JOIN participantes p ON p.cedula = pce.cedula
         JOIN eventos e ON e.id = pce.evento_id
         JOIN categorias c ON c.id = pce.categoria_id

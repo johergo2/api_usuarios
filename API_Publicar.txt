@@ -44,6 +44,14 @@ ejecuta: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000  -- Con esto p
 -- Instalar dependencias : En CMD ejecutar C:\Calificaciones>npm install
 -- Reiniciar : En CMD ejecutar C:\Calificaciones>npm run dev
 
+-- Si queremos limpiar caché para luego reinstalar dependencias en CMD: 
+C:\Calificaciones>rmdir /s /q node_modules
+C:\Calificaciones>npm install
+C:\Calificaciones>npm run dev
+
+
+
+
 -- Para abrir VSCode desde la carpeta del BackEnd: 
 Abrir CMD
 cd C:\Desarrollos\API_Usuarios\code .
@@ -81,8 +89,9 @@ git commit -m "Ajuste de CORS en main.py"
 git push origin main
 
 
--- Para que el BackEnd se ejecute en mi PC
-uvicorn app.main:app --reload (esto se ejecuta en CMD)
+-- Para que el BackEnd se ejecute en mi PC (esto se ejecuta en CMD en C:\Desarrollos\API_Usuarios)
+.venv\Scripts\activate
+uvicorn app.main:app --reload 
 Así las URL de las APIs serían: http://localhost:8000/api/eventos
 
 -- Para que el BackEnd se ejecute en el servidor Render
