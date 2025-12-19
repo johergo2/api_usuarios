@@ -22,7 +22,7 @@ async def listar_jurados(
         SELECT
             pce.id,
             pce.cedula,
-            p.nombre AS participante,
+            p.nombre AS jurado,
             pce.evento_id,
             e.nombre AS evento,
             pce.categoria_id,
