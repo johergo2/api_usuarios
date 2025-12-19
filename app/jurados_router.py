@@ -13,7 +13,7 @@ async def get_db():
 
 
 # ============================================
-# 1. Listar participantes
+# 1. Listar jurados
 # ============================================
 @router.get("/jurados")
 async def listar_participantes(db: AsyncSession = Depends(get_db)):
@@ -24,54 +24,53 @@ async def listar_participantes(db: AsyncSession = Depends(get_db)):
 
 
 # ============================================
-# 2. Obtener participante por ID
+# 2. Obtener jurados por ID
 # ============================================
-@router.get("/participantes/{id}")
-async def obtener_participante(id: int, db: AsyncSession = Depends(get_db)):
-    query = text("SELECT * FROM participantes WHERE id = :id")
+@router.get("/jurados/{id}")
+async def obtener_jurado(id: int, db: AsyncSession = Depends(get_db)):
+    query = text("SELECT * FROM jurado WHERE id = :id")
     result = await db.execute(query, {"id": id})
-    participante = result.mappings().first()
+    jurado = result.mappings().first()
 
-    if not participante:
-        raise HTTPException(status_code=404, detail="Participante no encontrado")
+    if not jurado:
+        raise HTTPException(status_code=404, detail="Jurado no encontrado")
 
-    return participante
+    return jurado
 
 
 # ============================================
-# 3. Crear participante
+# 3. Crear jurado
 # ============================================
-@router.post("/participantes")
-async def crear_participante(participante: dict, db: AsyncSession = Depends(get_db)):
+@router.post("/jurados")
+async def crear_jurado(jurado: dict, db: AsyncSession = Depends(get_db)):
 
-    print("📌 Datos recibidos en crear_participante:", participante)
+    print("📌 Datos recibidos en crear_jurado:", jurado)
     
     query = text("""
-        INSERT INTO participantes (cedula, nombre, tipo, observacion)
-        VALUES (:cedula, :nombre, :tipo, :observacion)
+        INSERT INTO jurados (cedula, nombre, observacion)
+        VALUES (:cedula, :nombre, :observacion)
         RETURNING *;
     """)
 
-    result = await db.execute(query, participante)
-    nuevo_participante = result.mappings().first()
+    result = await db.execute(query, jurado)
+    nuevo_jurado = result.mappings().first()
     await db.commit()
 
-    return nuevo_participante
+    return nuevo_jurado
 
 
 # ============================================
-# 4. Actualizar participante
+# 4. Actualizar jurado
 # ============================================
-@router.put("/participantes/{id}")
-async def actualizar_participante(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
+@router.put("/jurados/{id}")
+async def actualizar_jurado(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
 
     datos["id"] = id
 
     query = text("""
-        UPDATE participantes
+        UPDATE jurados
         SET cedula = :cedula,
-            nombre = :nombre,   
-            tipo = :tipo,        
+            nombre = :nombre,                       
             observacion = :observacion,                        
             fecha_actualizacion = CURRENT_TIMESTAMP
         WHERE id = :id
@@ -80,26 +79,26 @@ async def actualizar_participante(id: int, datos: dict, db: AsyncSession = Depen
 
   
     result = await db.execute(query, datos)
-    participante = result.mappings().first()
+    jurado = result.mappings().first()
 
-    if not participante:
-        raise HTTPException(status_code=404, detail="Participante no encontrado")
+    if not jurado:
+        raise HTTPException(status_code=404, detail="Jurado no encontrado")
 
     await db.commit()
-    return participante
+    return jurado
 
 
 # ============================================
-# 5. Eliminar participante
+# 5. Eliminar jurado
 # ============================================
-@router.delete("/participantes/{id}")
-async def eliminar_participante(id: int, db: AsyncSession = Depends(get_db)):
-    query = text("DELETE FROM participantes WHERE id = :id RETURNING id")
+@router.delete("/jurados/{id}")
+async def eliminar_jurado(id: int, db: AsyncSession = Depends(get_db)):
+    query = text("DELETE FROM jurados WHERE id = :id RETURNING id")
     result = await db.execute(query, {"id": id})
-    participante = result.mappings().first()
+    jurado = result.mappings().first()
 
-    if not participante:
-        raise HTTPException(status_code=404, detail="Participante no encontrado")
+    if not jurado:
+        raise HTTPException(status_code=404, detail="Jurado no encontrado")
 
     await db.commit()
-    return {"message": "participante eliminado correctamente", "id": id}
+    return {"message": "jurado eliminado correctamente", "id": id}
