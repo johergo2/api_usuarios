@@ -39,30 +39,33 @@ async def listar_calificaciones(db: AsyncSession = Depends(get_db)
 
 
 # ============================================
-# 2. Listar categorías de un evento
-# GET /api/eventos/{evento_id}/categorias
+# 2. Listar calificaciones de un evento
+# GET /api/eventos/{evento_id}/calificaciones
 # ============================================
-@router.get("/eventos/{evento_id}/categorias")
-async def listar_categorias_evento(
+@router.get("/eventos/{evento_id}/calificaciones")
+async def listar_calificaciones_evento(
     evento_id: int,
     db: AsyncSession = Depends(get_db)
 ):
     query = text("""
-        SELECT
-            c.id,
-            c.categoria
-        FROM eventos_categorias ec
-        JOIN categorias c ON c.id = ec.categoria_id
-        WHERE ec.evento_id = :evento_id
-        ORDER BY c.categoria
-    """)
+                  SELECT 
+                      id,
+                      cedula_jurado,
+                      cedula_participan,
+                      evento_id,
+                      categoria_id,
+                      puntaje
+                  FROM calificaciones
+                  WHERE evento_id = :evento_id
+                  ORDER BY evento_id
+                """)
 
     result = await db.execute(query, {"evento_id": evento_id})
-    categorias = result.mappings().all()
+    calificaciones = result.mappings().all()
 
     return {
         "evento_id": evento_id,
-        "categorias": categorias
+        "calificaciones": calificaciones
     }
 
 # ============================================
