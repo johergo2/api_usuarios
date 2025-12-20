@@ -69,24 +69,24 @@ async def listar_calificaciones_evento(
     }
 
 # ============================================
-# 3. Crear categoria
+# 3. Crear calificacion
 # ============================================
-@router.post("/categorias")
-async def crear_categoria(categoria: dict, db: AsyncSession = Depends(get_db)):
+@router.post("/calificaciones")
+async def crear_calificacion(jurado: dict, participante: dict, evento: dict, categoria: dict, puntaje: dict, db: AsyncSession = Depends(get_db)):
 
-    print("📌 Datos recibidos en crear_categoria:", categoria)
+    print("📌 Datos recibidos en crear_calificacion:", jurado)
     
     query = text("""
-        INSERT INTO categorias (categoria)
-        VALUES (:categoria)
+        INSERT INTO calificaciones (cedula_jurado, cedula_participan, evento_id, categoria_id, puntaje)
+        VALUES (:jurado, :participante, :evento, :categoria, :puntaje )
         RETURNING *;
     """)
 
-    result = await db.execute(query, categoria)
-    nueva_categoria = result.mappings().first()
+    result = await db.execute(query, jurado)
+    nueva_calificacion = result.mappings().first()
     await db.commit()
 
-    return nueva_categoria
+    return nueva_calificacion
 
 # ============================================
 # 4. Actualizar categoria
