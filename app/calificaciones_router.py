@@ -2,8 +2,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
+from pydantic import BaseModel, Field
+from decimal import Decimal
 
 router = APIRouter()
+
+class CalificacionCreate(BaseModel):
+    cedula_jurado: str = Field(..., max_length=20)
+    cedula_participan: str = Field(..., max_length=20)
+    evento_id: int
+    categoria_id: int
+    puntaje: Decimal = Field(..., ge=0, le=100)
 
 # ============================================
 # Obtener sesión de BD (igual a eventos)
@@ -72,17 +81,21 @@ async def listar_calificaciones_evento(
 # 3. Crear calificacion
 # ============================================
 @router.post("/calificaciones")
-async def crear_calificacion(jurado: dict, participante: dict, evento: dict, categoria: dict, puntaje: dict, db: AsyncSession = Depends(get_db)):
+async def crear_calificacion(
+    data: CalificacionCreate, 
+    db: AsyncSession = Depends(get_db)
+):
 
-    print("📌 Datos recibidos en crear_calificacion:", jurado)
+
+    print("📌 Datos recibidos en crear_calificacion:", data.dict())
     
     query = text("""
         INSERT INTO calificaciones (cedula_jurado, cedula_participan, evento_id, categoria_id, puntaje)
-        VALUES (:jurado, :participante, :evento, :categoria, :puntaje )
+        VALUES (:cedula_jurado, :cedula_participan, :evento_id, :categoria_id, :puntaje )
         RETURNING *;
     """)
 
-    result = await db.execute(query, jurado)
+    result = await db.execute(query, data.dict())
     nueva_calificacion = result.mappings().first()
     await db.commit()
 

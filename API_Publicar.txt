@@ -126,6 +126,7 @@ Se creó la URL: Local:   http://localhost:5173/
 -- Reiniciar : En CMD ejecutar C:\Calificaciones>npm run dev
 
 -- OJO: Para ejecutar la pantalla de Login: http://localhost:5173/
+--      Para ejecutar las API localmente: http://localhost:8000/api/usuarios
 
 -- PANTALLA CREACION EVENTOS
 https://api-usuarios-f1im.onrender.com/api/eventos
@@ -133,3 +134,10 @@ https://api-usuarios-f1im.onrender.com/api/eventos/{id}
 https://api-usuarios-f1im.onrender.com/api/usuarios
 
 
+--   OJO (LOCALMENTE)
+Para ejecutar la pantalla de Login: http://localhost:5173/
+Para ejecutar las API localmente: http://localhost:8000/api/usuarios
+
+-- OJO (RENDER.COM)
+Para ejecutar la pantalla de Login: https://calificaciones-app.onrender.com
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos
