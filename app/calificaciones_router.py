@@ -71,8 +71,10 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
     params = {}
 
     if evento_id:
-        query += " AND e.evento_id = :evento_id"
-        params["evento_id"] = evento_id        
+        query += " AND e.id = :evento_id"
+        params["evento_id"] = evento_id       
+
+    query += " ORDER BY e.id" 
 
     result = await db.execute(text(query), params)
     rows = result.mappings().all()
