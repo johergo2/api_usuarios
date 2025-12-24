@@ -45,6 +45,33 @@ async def listar_calificaciones(db: AsyncSession = Depends(get_db)
 
     return {"calificaciones": rows}
 
+# ============================================
+# 1A. Listar calificaciones Total
+# GET /api/calificacionestot
+# ============================================
+@router.get("/calificacionestot")
+async def listar_calificacionestot(db: AsyncSession = Depends(get_db)
+):
+    query = text("""
+                    SELECT
+                    c.id,
+                    j.cedula||'-'||j.nombre        AS jurado,
+                    e.id||'-'||e.nombre        AS evento,
+                    cat.id||'-'||cat.categoria   AS categoria,
+                    p.id||'-'||p.nombre        AS participante,
+                    c.puntaje
+                    FROM calificaciones c, jurados j, eventos e, categorias cat, participantes p
+                    WHERE j.cedula = c.cedula_jurado
+                    AND   e.id = c.evento_id
+                    AND   cat.id = c.categoria_id
+                    AND   p.cedula = c.cedula_participan
+                  ORDER BY e.id
+                """)
+
+    result = await db.execute(query)
+    rows = result.mappings().all()
+
+    return {"calificacionestot": rows}
 
 
 # ============================================
