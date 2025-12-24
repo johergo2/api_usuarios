@@ -50,9 +50,10 @@ async def listar_calificaciones(db: AsyncSession = Depends(get_db)
 # GET /api/calificacionestot
 # ============================================
 @router.get("/calificacionestot")
-async def listar_calificacionestot(db: AsyncSession = Depends(get_db)
+async def listar_calificacionestot(evento_id: optional[int] = Query(none), 
+                                   db: AsyncSession = Depends(get_db)
 ):
-    query = text("""
+    query = """
                     SELECT
                     c.id,
                     j.cedula||'-'||j.nombre        AS jurado,
@@ -66,9 +67,14 @@ async def listar_calificacionestot(db: AsyncSession = Depends(get_db)
                     AND   cat.id = c.categoria_id
                     AND   p.cedula = c.cedula_participan
                   ORDER BY e.id
-                """)
+                """
+    params = {}
 
-    result = await db.execute(query)
+    if evento_id:
+        query += " WHERE e.evento_id = :evento_id"
+        params["evento_id"] = evento_id        
+
+    result = await db.execute(text(query), params)
     rows = result.mappings().all()
 
     return {"calificacionestot": rows}
