@@ -66,13 +66,12 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                     WHERE j.cedula = c.cedula_jurado
                     AND   e.id = c.evento_id
                     AND   cat.id = c.categoria_id
-                    AND   p.cedula = c.cedula_participan
-                  ORDER BY e.id
+                    AND   p.cedula = c.cedula_participan                  
                 """
     params = {}
 
     if evento_id:
-        query += " WHERE e.evento_id = :evento_id"
+        query += " AND e.evento_id = :evento_id"
         params["evento_id"] = evento_id        
 
     result = await db.execute(text(query), params)
