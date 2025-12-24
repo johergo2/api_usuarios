@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
 from pydantic import BaseModel, Field
+from typing import Optional
 from decimal import Decimal
 
 router = APIRouter()
@@ -50,7 +51,7 @@ async def listar_calificaciones(db: AsyncSession = Depends(get_db)
 # GET /api/calificacionestot
 # ============================================
 @router.get("/calificacionestot")
-async def listar_calificacionestot(evento_id: optional[int] = Query(none), 
+async def listar_calificacionestot(evento_id: Optional[int] = Query(None), 
                                    db: AsyncSession = Depends(get_db)
 ):
     query = """
