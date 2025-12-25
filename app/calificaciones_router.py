@@ -131,10 +131,10 @@ async def crear_calificacion(
                         LIMIT 1
                         """)
     result = await db.execute(query_existe, {
-        "cedula_jurado": data["cedula_jurado"],
-        "cedula_participan": data["cedula_participan"],
-        "evento_id": data["evento_id"],
-        "categoria_id": data["categoria_id"],
+        "cedula_jurado": data.cedula_jurado,
+        "cedula_participan": data.cedula_participan,
+        "evento_id": data.evento_id,
+        "categoria_id": data.categoria_id,
     })
 
     if result.first():
