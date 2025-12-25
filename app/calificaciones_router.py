@@ -60,7 +60,7 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                     j.cedula||'-'||j.nombre        AS jurado,
                     e.id||'-'||e.nombre        AS evento,
                     cat.id||'-'||cat.categoria   AS categoria,
-                    p.id||'-'||p.nombre        AS participante,
+                    p.cedula||'-'||p.nombre        AS participante,
                     c.puntaje
                     FROM calificaciones c, jurados j, eventos e, categorias cat, participantes p
                     WHERE j.cedula = c.cedula_jurado
