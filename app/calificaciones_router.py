@@ -121,6 +121,28 @@ async def crear_calificacion(
     db: AsyncSession = Depends(get_db)
 ):
 
+    query_existe = text("""
+                        SELECT 1
+                        FROM calificaciones
+                        WHERE cedula_jurado = :cedula_jurado
+                        AND   cedula_participan = :cedula_participan
+                        AND   evento_id = :evento_id
+                        AND   categoria_id = :categoria_id
+                        LIMIT 1
+                        """)
+    result = await db.execute(query_existe, {
+        "cedula_jurado": data["cedula_jurado"],
+        "cedula_participan": data["cedula_participan"],
+        "evento_id": data["evento_id"],
+        "categoria_id": data["categoria_id"],
+    })
+
+    if result.first():
+        raise HTTPException(
+            status_code=409,
+            detail="El participante ya tiene calificación para este evento y categoria"
+        )
+
 
     print("📌 Datos recibidos en crear_calificacion:", data.dict())
     
