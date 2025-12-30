@@ -163,16 +163,16 @@ async def crear_calificacion(
     return nueva_calificacion
 
 # ============================================
-# 4. Actualizar categoria
+# 4. Actualizar calificación
 # ============================================
-@router.put("/categoria/{id}")
-async def actualizar_categoria(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
+@router.put("/calificaciones/{id}")
+async def actualizar_calificacion(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
 
     datos["id"] = id
 
     query = text("""
-        UPDATE categorias
-        SET categoria = :categoria,                        
+        UPDATE calificaciones
+        SET puntaje = :puntaje,                        
             fecha_actualizacion = CURRENT_TIMESTAMP
         WHERE id = :id
         RETURNING *;
@@ -183,7 +183,7 @@ async def actualizar_categoria(id: int, datos: dict, db: AsyncSession = Depends(
     categoria = result.mappings().first()
 
     if not categoria:
-        raise HTTPException(status_code=404, detail="Categoria no encontrada")
+        raise HTTPException(status_code=404, detail="Calificación no encontrada")
 
     await db.commit()
     return categoria
