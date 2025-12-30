@@ -190,16 +190,16 @@ async def actualizar_calificacion(id: int, datos: dict, db: AsyncSession = Depen
 
 
 # ============================================
-# 5. Eliminar categoria
+# 5. Eliminar calificación
 # ============================================
-@router.delete("/categoria/{id}")
-async def eliminar_categoria(id: int, db: AsyncSession = Depends(get_db)):
-    query = text("DELETE FROM categorias WHERE id = :id RETURNING id")
+@router.delete("/calificaciones/{id}")
+async def eliminar_calificacion(id: int, db: AsyncSession = Depends(get_db)):
+    query = text("DELETE FROM calificaciones WHERE id = :id RETURNING id")
     result = await db.execute(query, {"id": id})
     categoria = result.mappings().first()
 
     if not categoria:
-        raise HTTPException(status_code=404, detail="Categoria no encontrada")
+        raise HTTPException(status_code=404, detail="Calificación no encontrada")
 
     await db.commit()
-    return {"message": "categoria eliminada correctamente", "id": id}
+    return {"message": "calificación eliminada correctamente", "id": id}
