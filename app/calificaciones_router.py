@@ -212,44 +212,54 @@ async def eliminar_calificacion(id: int, db: AsyncSession = Depends(get_db)):
     return {"message": "calificación eliminada correctamente", "id": id}
 
 # ====================================================
-# 6. Calificación promedio por participante
+# 6. Consulta calificaciones promedio
+# ====================================================
+@router.get("/calificaciones-promedio/existen")
+async def existen_promedios(db: AsyncSession = Depends(get_db)):
+    query = text("SELECT COUNT(*) AS total FROM calificaciones_promedio")
+    result = await db.execute(query)
+    total = result.scalar()
+
+    return {
+        "existen": total > 0,
+        "total": total
+    }
+
+# ====================================================
+# 7. Calcula calificación promedio por participante
 # ====================================================
 @router.post("/calificaciones-promedio")
 async def generar_calificaciones_promedio( db: AsyncSession = Depends(get_db)):    
     
-    existe_query = text("""
-        SELECT 1
-        FROM calificaciones_promedio
-        LIMIT 1;
-    """)
+    try:
+        await db.execute(text("TRUNCATE TABLE calificaciones_promedio"))
 
-    result = await db.execute(existe_query)
-
-    if result.first():
-        raise HTTPException(
-            status_code=409,
-            detail="Los promedios ya fueron calculados"
-        )
-
-    query = text("""
-                    INSERT INTO calificaciones_promedio (                     
-                        cedula_participan,                        
-                        evento_id,
-                        categoria_id,
-                        promedio
-                    )
-                    SELECT                              
-                        cedula_participan,                        
-                        evento_id,
-                        categoria_id,
-                        ROUND(AVG(puntaje),2) AS promedio
-                    FROM calificaciones
-                    GROUP BY cedula_participan,                        
-                             evento_id,
-                             categoria_id                                        
-             """)
-        
-    await db.execute(query) 
-    await db.commit()
+        query = text("""
+                        INSERT INTO calificaciones_promedio (                     
+                            cedula_participan,                        
+                            evento_id,
+                            categoria_id,
+                            promedio
+                        )
+                        SELECT                              
+                            cedula_participan,                        
+                            evento_id,
+                            categoria_id,
+                            ROUND(AVG(puntaje),2) AS promedio
+                        FROM calificaciones
+                        GROUP BY cedula_participan,                        
+                                evento_id,
+                                categoria_id                                        
+                """)
             
-    return {"message": "Promedios insertados correctamente"}
+        await db.execute(query) 
+        await db.commit()
+                
+        return {"message": "Promedios insertados correctamente"}
+
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
