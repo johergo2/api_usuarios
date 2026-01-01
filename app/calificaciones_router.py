@@ -15,6 +15,15 @@ class CalificacionCreate(BaseModel):
     categoria_id: int
     puntaje: Decimal = Field(..., ge=0, le=100)
 
+class CalificacionPromedioCreate(BaseModel):
+    cedula_jurado: str
+    jurado: str
+    cedula_participan: str
+    participante: str
+    evento_id: int
+    categoria_id: int
+    promedio: float    
+
 # ============================================
 # Obtener sesión de BD (igual a eventos)
 # ============================================
@@ -203,3 +212,41 @@ async def eliminar_calificacion(id: int, db: AsyncSession = Depends(get_db)):
 
     await db.commit()
     return {"message": "calificación eliminada correctamente", "id": id}
+
+# ====================================================
+# 6. Calificación promedio por participante y jurado
+# ====================================================
+@router.post("/calificaciones-promedio")
+async def insertar_promedios(data: list[CalificacionPromedioCreate], 
+                             db: AsyncSession = Depends(get_db)):
+    if not data:
+        raise HTTPException(status_code=400, detail="No se recibieron datos")
+    
+    query = text("""
+                    INSERT INTO calificaciones_promedio (
+                        cedula_jurado,
+                        jurado,
+                        cedula_participan,
+                        participante,
+                        evento_id,
+                        categoria_id,
+                        promedio
+                    )
+                    VALUES (
+                        :cedula_jurado,
+                        :jurado,
+                        :cedula_participan,
+                        :participante,
+                        :evento_id,
+                        :categoria_id,
+                        :promedio
+                    )                     
+             """)
+        
+
+    for item in data:
+        await db.execute(query, item.dict()) 
+    await db.commit()
+            
+    return {"message": "Promedios insertados correctamente",
+            "total": len(data)}
