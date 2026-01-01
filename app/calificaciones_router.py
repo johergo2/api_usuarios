@@ -217,6 +217,20 @@ async def eliminar_calificacion(id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/calificaciones-promedio")
 async def generar_calificaciones_promedio( db: AsyncSession = Depends(get_db)):    
     
+    existe_query = text("""
+        SELECT 1
+        FROM calificaciones_promedio
+        LIMIT 1;
+    """)
+
+    result = await db.execute(existe_query)
+
+    if result.first():
+        raise HTTPException(
+            status_code=409,
+            detail="Los promedios ya fueron calculados"
+        )
+
     query = text("""
                     INSERT INTO calificaciones_promedio (                     
                         cedula_participan,                        
