@@ -45,7 +45,7 @@ async def listar_participaciones(
         query += " AND pce.cedula = :cedula"
         params["cedula"] = cedula
 
-    query += " ORDER BY e.nombre, c.categoria"
+    query += " ORDER BY e.nombre, c.categoria, pce.cedula"
 
     result = await db.execute(text(query), params)
     rows = result.mappings().all()
