@@ -54,7 +54,7 @@ async def listar_calificaciones(db: AsyncSession = Depends(get_db)
     return {"calificaciones": rows}
 
 # ============================================
-# 1A. Listar calificaciones Total
+# 1A. Listar calificaciones Total (con descripciones)
 # GET /api/calificacionestot
 # ============================================
 @router.get("/calificacionestot")
@@ -91,6 +91,42 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
     rows = result.mappings().all()
 
     return {"calificacionestot": rows}
+
+# ==========================================================
+# 1B. Listar calificaciones promedio (Ranking de ganadores)
+# GET /api/calificacionestot
+# ==========================================================
+@router.get("/calificacionesranking")
+async def listar_calificacionestot(evento_id: Optional[int] = Query(None), 
+                                   db: AsyncSession = Depends(get_db)
+):
+    query = """
+                SELECT
+                c.id,
+                e.id            AS evento_id,
+                e.nombre        AS evento,
+                cat.id          AS categoria_id,
+                cat.categoria   AS categoria,
+                p.cedula        AS cedula_participan,
+                p.nombre        AS participante,
+                c.promedio
+                FROM calificaciones_promedio c, eventos e, categorias cat, participantes p
+                WHERE e.id = c.evento_id
+                AND   cat.id = c.categoria_id
+                AND   p.cedula = c.cedula_participan                  
+                """
+    params = {}
+
+    if evento_id:
+        query += " AND e.id = :evento_id"
+        params["evento_id"] = evento_id       
+
+    query += " ORDER BY e.id, cat.id, c.promedio desc" 
+
+    result = await db.execute(text(query), params)
+    rows = result.mappings().all()
+
+    return {"calificacionesranking": rows}
 
 
 # ============================================
