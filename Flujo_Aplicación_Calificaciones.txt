@@ -1,11 +1,20 @@
 
-1- React arranca la aplicación cargando "App.tsx" para activar el enrutamiento SPA (Single Page Application). De acuerdo con la URL del navegador (http://localhost:5173/participantes) carga la página correspondiente, ósea llama el archivo "C:\Calificaciones\src\pages\ParticipanPage.tsx".
-2- La URL del navegador se llama cuando se hace click en las opciones del Menú "MenuPage.tsx". Si se hace click en la opción "Crear Participantes" la función "navigate("/participantes")" va al archivo "App.tsx" y busca la ruta "<Route path="/participantes" element={<ParticipanPage />} />" que llama la URL correspndiente "http://localhost:5173/participantes" esta URL corresponde al archivo "C:\Calificaciones\src\pages\ParticipanPage.tsx".
-3- El archivo "C:\Calificaciones\src\pages\ParticipanPage.tsx" carga el archivo "C:\Calificaciones\src\services\participantesApi.ts" que corresponde a la lógica de los eventos de la página de creación de participantes. Aquí se importa las funciones "getParticipantes", "crearParticipante", "actualizarParticipante", "eliminarParticipante" (archivo participantesAPI.tsx). 
-4- En el archivo ParticipantesPage.tsx cuando se presiona el botón "Crear Participante" se llama la función "guardarParticipante" que después llama la función "crearParticipante" (línea await crearParticipante(payload);) y "cargarParticipantes" que llama "getParticipantes" de participantesApi.ts.
-5- En el archivo participantesApi.ts la función "crearParticipante" llama la URL "https://api-usuarios-f1im.onrender.com/api/participantes" (POST)
-6- En el archivo participantesApi.ts la función "getParticipantes" llama la URL "https://api-usuarios-f1im.onrender.com/api/participantes" (GET)
-7- Cuando se genera la petición HTTP "https://api-usuarios-f1im.onrender.com/api/participantes" (POST) FastAPI recibe la petición y busca en "participantes_router.py" la ruta "@router.post("/participantes")" para ejecutar el insert y obtener un resultado (result = await db.execute(query, participante)).
+1- React arranca la aplicación cargando "App.tsx" para activar el enrutamiento SPA (Single Page Application). 
+   De acuerdo con la URL del navegador (http://localhost:5173/participantes) carga la página correspondiente, ósea llama el 
+   archivo "C:\Calificaciones\src\pages\ParticipanPage.tsx".
+2- La URL del navegador se llama cuando se hace click en las opciones del Menú "MenuPage.tsx". Si se hace click en la opción "Crear Participantes" 
+   la función "navigate("/participantes")" va al archivo "App.tsx" y busca la ruta "<Route path="/participantes" element={<ParticipanPage />} />" que 
+   llama la URL correspndiente "http://localhost:5173/participantes" esta URL corresponde al archivo "C:\Calificaciones\src\pages\ParticipanPage.tsx".
+3- El archivo "C:\Calificaciones\src\pages\ParticipanPage.tsx" carga el archivo "C:\Calificaciones\src\services\participantesApi.ts" que corresponde a 
+   la lógica de los eventos de la página de creación de participantes. Aquí se importa las funciones "getParticipantes", "crearParticipante", 
+   "actualizarParticipante", "eliminarParticipante" (archivo participantesAPI.tsx). 
+4- En el archivo ParticipantesPage.tsx cuando se presiona el botón "Crear Participante" se llama la función "guardarParticipante" que después llama 
+   la función "crearParticipante" (línea await crearParticipante(payload);) y "cargarParticipantes" que llama "getParticipantes" de participantesApi.ts.
+5- En el archivo participantesApi.ts la función "crearParticipante" llama la URL "https://api-usuarios-f1im.onrender.com/api/participantes" (POST).
+6- En el archivo participantesApi.ts la función "getParticipantes" llama la URL "https://api-usuarios-f1im.onrender.com/api/participantes" (GET).
+7- Cuando se genera la petición HTTP "https://api-usuarios-f1im.onrender.com/api/participantes" (POST) FastAPI recibe la petición y busca en 
+   "participantes_router.py" la ruta "@router.post("/participantes")" para ejecutar el insert y obtener un 
+   resultado (result = await db.execute(query, participante)).
 8- OJO: el archivo "participantes_router.py" está dormido hasta que llega la petición HTTP.
 
 
