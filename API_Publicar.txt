@@ -142,3 +142,5 @@ Para ejecutar las API localmente: http://localhost:8000/api/usuarios
 Para ejecutar la pantalla de Login: https://calificaciones-app.onrender.com
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos?usuario_id=1
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos/19?usuario_id=1
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos/20/categorias?usuario_id=1
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/participantes-categorias-eventos?evento_id=20&cedula=800923001&usuario_id=2
