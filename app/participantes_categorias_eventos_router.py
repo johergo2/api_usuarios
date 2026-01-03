@@ -48,7 +48,7 @@ async def listar_participaciones(
         params["cedula"] = cedula
 
     if usuario_id:
-        query += "AND ue.usuario_id = :usuario_id"
+        query += " AND ue.usuario_id = :usuario_id"
         params["usuario_id"] = usuario_id
 
     query += " ORDER BY e.nombre, c.categoria, pce.cedula"
