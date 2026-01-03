@@ -19,20 +19,24 @@ async def get_db():
 # ============================================
 @router.get("/eventos/{evento_id}/categorias")
 async def listar_categorias_evento(
-    evento_id: int,
-    db: AsyncSession = Depends(get_db)
+     usuario_id: int,
+     evento_id: int,
+     db: AsyncSession = Depends(get_db)
 ):
     query = text("""
-        SELECT
-            c.id,
-            c.categoria
-        FROM eventos_categorias ec
-        JOIN categorias c ON c.id = ec.categoria_id
-        WHERE ec.evento_id = :evento_id
-        ORDER BY c.categoria
+                    SELECT
+                        c.id,
+                        c.categoria
+                    FROM eventos_categorias ec
+                    JOIN categorias c ON c.id = ec.categoria_id
+                    INNER JOIN usuarios_eventos ue
+                       ON ue.evento_id = ec.evento_id
+                    WHERE ec.evento_id = :evento_id
+                    AND   ue.usuario_id = :usuario_id
+                    ORDER BY c.categoria
     """)
 
-    result = await db.execute(query, {"evento_id": evento_id})
+    result = await db.execute(query, {"usuario_id": usuario_id, "evento_id": evento_id})
     categorias = result.mappings().all()
 
     return {
