@@ -19,8 +19,8 @@ async def get_db():
 # ============================================
 @router.get("/eventos/{evento_id}/categorias")
 async def listar_categorias_evento(
-     usuario_id: int,
      evento_id: int,
+     usuario_id: int,     
      db: AsyncSession = Depends(get_db)
 ):
     query = text("""
@@ -36,7 +36,7 @@ async def listar_categorias_evento(
                     ORDER BY c.categoria
     """)
 
-    result = await db.execute(query, {"usuario_id": usuario_id, "evento_id": evento_id})
+    result = await db.execute(query, {"evento_id": evento_id, "usuario_id": usuario_id})
     categorias = result.mappings().all()
 
     return {
