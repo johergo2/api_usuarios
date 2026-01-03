@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
@@ -16,6 +16,7 @@ async def get_db():
 async def listar_participaciones(
     evento_id: int | None = None,
     cedula: str | None = None,
+    usuario_id: int | None = None,
     db: AsyncSession = Depends(get_db)
 ):
     query = """
@@ -32,6 +33,7 @@ async def listar_participaciones(
         JOIN participantes p ON p.cedula = pce.cedula
         JOIN eventos e ON e.id = pce.evento_id
         JOIN categorias c ON c.id = pce.categoria_id
+        JOIN usuarios_eventos ue ON ue.evento_id = e.id
         WHERE 1=1
     """
 
@@ -45,6 +47,10 @@ async def listar_participaciones(
         query += " AND pce.cedula = :cedula"
         params["cedula"] = cedula
 
+    if usuario_id:
+        query += "AND ue.usuario_id = :usuario_id"
+        params["usuario_id"] = usuario_id
+
     query += " ORDER BY e.nombre, c.categoria, pce.cedula"
 
     result = await db.execute(text(query), params)
@@ -52,6 +58,9 @@ async def listar_participaciones(
 
     return {"data": rows}
 
+# ==================================================
+# Insertar participantes_categorias_eventos
+# ==================================================
 @router.post("/participantes-categorias-eventos")
 async def asignar_participante_evento(
     data: dict,
