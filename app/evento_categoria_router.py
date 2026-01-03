@@ -40,6 +40,9 @@ async def listar_categorias_evento(
     result = await db.execute(query, {"evento_id": evento_id, "usuario_id": usuario_id})
     categorias = result.mappings().all()
 
+    print("DEBUG → evento_id:", evento_id, "usuario_id:", usuario_id)
+
+
     if not categorias:
         raise HTTPException(
             status_code=403,
