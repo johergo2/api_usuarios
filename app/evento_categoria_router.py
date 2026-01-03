@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
@@ -20,7 +20,7 @@ async def get_db():
 @router.get("/eventos/{evento_id}/categorias")
 async def listar_categorias_evento(
      evento_id: int,
-     usuario_id: int,     
+     usuario_id: int =  Query(..., description="ID del usuario autenticado"),     
      db: AsyncSession = Depends(get_db)
 ):
     query = text("""
@@ -28,8 +28,9 @@ async def listar_categorias_evento(
                         c.id,
                         c.categoria
                     FROM eventos_categorias ec
-                    JOIN categorias c ON c.id = ec.categoria_id
-                    INNER JOIN usuarios_eventos ue
+                    JOIN categorias c 
+                       ON c.id = ec.categoria_id
+                    JOIN usuarios_eventos ue
                        ON ue.evento_id = ec.evento_id
                     WHERE ec.evento_id = :evento_id
                     AND   ue.usuario_id = :usuario_id
@@ -38,6 +39,12 @@ async def listar_categorias_evento(
 
     result = await db.execute(query, {"evento_id": evento_id, "usuario_id": usuario_id})
     categorias = result.mappings().all()
+
+    if not categorias:
+        raise HTTPException(
+            status_code=403,
+            detail="El usuario no tiene acceso a este evento o no hay categorías"
+        )
 
     return {
         "evento_id": evento_id,
