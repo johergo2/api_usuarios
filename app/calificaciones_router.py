@@ -34,7 +34,8 @@ async def get_db():
 # GET /api/calificaciones
 # ============================================
 @router.get("/calificaciones")
-async def listar_calificaciones(db: AsyncSession = Depends(get_db)
+async def listar_calificaciones(usuario_id: int | None = None, 
+                                db: AsyncSession = Depends(get_db)
 ):
     query = text("""
                   SELECT 
@@ -44,11 +45,20 @@ async def listar_calificaciones(db: AsyncSession = Depends(get_db)
                       evento_id,
                       categoria_id,
                       puntaje
-                  FROM calificaciones
-                  ORDER BY id
+                  FROM calificaciones c
+                  JOIN usuarios_eventos ue ON ue.evento_id = c.evento_id
+                  WHERE 1=1                  
                 """)
+    
+    params = {}
 
-    result = await db.execute(query)
+    if usuario_id:
+        query += " AND ue.usuario_id = :usuario_id"
+        params["usuario_id"] = usuario_id    
+
+    query += " ORDER BY c.evento_id, c.categoria_id, c.cedula_participan, c.cedula_jurado"        
+
+    result = await db.execute(query, params)
     rows = result.mappings().all()
 
     return {"calificaciones": rows}
