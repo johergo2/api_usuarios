@@ -50,11 +50,15 @@ async def listar_calificaciones(usuario_id: int | None = None,
                WHERE 1=1                  
             """
     
+    print("QUERY:", query)
+    
     params = {}
 
     if usuario_id:
         query += " AND ue.usuario_id = :usuario_id"
         params["usuario_id"] = usuario_id    
+
+    print("PARAMS:", params)        
 
     query += " ORDER BY c.evento_id, c.categoria_id, c.cedula_participan, c.cedula_jurado"        
 
