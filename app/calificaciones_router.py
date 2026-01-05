@@ -45,8 +45,7 @@ async def listar_calificaciones(usuario_id: int | None = None,
                    evento_id,
                    categoria_id,
                    puntaje
-               FROM calificaciones c
-               JOIN usuarios_eventos ue ON ue.evento_id = c.evento_id
+               FROM calificaciones c               
                WHERE 1=1                  
             """
     
@@ -54,13 +53,22 @@ async def listar_calificaciones(usuario_id: int | None = None,
     
     params = {}
 
-    if usuario_id:
-        query += " AND ue.usuario_id = :usuario_id"
+    if usuario_id is not None:
+        query += """
+            AND EXISTS (
+                SELECT 1
+                FROM usuarios_eventos ue
+                WHERE ue.evento_id = c.evento_id
+                AND ue.usuario_id = :usuario_id
+            )
+        """
         params["usuario_id"] = usuario_id    
 
     print("PARAMS:", params)        
 
-    query += " ORDER BY c.evento_id, c.categoria_id, c.cedula_participan, c.cedula_jurado"        
+    query += """
+        ORDER BY c.evento_id, c.categoria_id, c.cedula_participan, c.cedula_jurado
+        """        
 
     result = await db.execute(text(query), params)
     rows = result.mappings().all()
