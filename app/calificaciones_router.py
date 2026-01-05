@@ -81,6 +81,7 @@ async def listar_calificaciones(usuario_id: int | None = None,
 # ============================================
 @router.get("/calificacionestot")
 async def listar_calificacionestot(evento_id: Optional[int] = Query(None), 
+                                   usuario_id: int | None = None,
                                    db: AsyncSession = Depends(get_db)
 ):
     query = """
@@ -95,19 +96,25 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                     p.cedula        AS cedula_participan,
                     p.nombre        AS participante,
                     c.puntaje
-                    FROM calificaciones c, jurados j, eventos e, categorias cat, participantes p
+                    FROM calificaciones c, jurados j, eventos e, 
+                         categorias cat, participantes p, usuarios_eventos ue
                     WHERE j.cedula = c.cedula_jurado
                     AND   e.id = c.evento_id
                     AND   cat.id = c.categoria_id
-                    AND   p.cedula = c.cedula_participan                  
+                    AND   p.cedula = c.cedula_participan  
+                    AND   ue.evento_id = c.evento_id                
                 """
     params = {}
 
     if evento_id:
         query += " AND e.id = :evento_id"
-        params["evento_id"] = evento_id       
+        params["evento_id"] = evento_id     
 
-    query += " ORDER BY e.id" 
+    if usuario_id:
+        query += " AND ue.usuario_id = :usuario_id"
+        params["usuario_id"] = usuario_id               
+
+    query += " e.id, cat.id, p.cedula, j.cedula" 
 
     result = await db.execute(text(query), params)
     rows = result.mappings().all()
