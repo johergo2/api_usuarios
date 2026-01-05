@@ -97,12 +97,12 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                     p.nombre        AS participante,
                     c.puntaje
                     FROM calificaciones c, jurados j, eventos e, 
-                         categorias cat, participantes p, usuarios_eventos ue
+                         categorias cat, participantes p
                     WHERE j.cedula = c.cedula_jurado
                     AND   e.id = c.evento_id
                     AND   cat.id = c.categoria_id
-                    AND   p.cedula = c.cedula_participan  
-                    AND   ue.evento_id = c.evento_id                
+                    AND   p.cedula = c.cedula_participan                                
+                    WHERE 1=1
                 """
     params = {}
 
@@ -110,11 +110,21 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
         query += " AND e.id = :evento_id"
         params["evento_id"] = evento_id     
 
-    if usuario_id:
-        query += " AND ue.usuario_id = :usuario_id"
+    if usuario_id is not None:
+        query += """
+            AND EXISTS (
+                SELECT 1
+                FROM usuarios_eventos ue
+                WHERE ue.evento_id = e.id
+                AND ue.usuario_id = :usuario_id
+            )
+        """
+        
         params["usuario_id"] = usuario_id               
 
-    query += " e.id, cat.id, p.cedula, j.cedula" 
+    query += """
+        ORDER BY e.id, cat.id, p.cedula, j.cedula
+        """
 
     result = await db.execute(text(query), params)
     rows = result.mappings().all()
