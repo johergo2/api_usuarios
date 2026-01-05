@@ -101,8 +101,7 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                     WHERE j.cedula = c.cedula_jurado
                     AND   e.id = c.evento_id
                     AND   cat.id = c.categoria_id
-                    AND   p.cedula = c.cedula_participan                                
-                    WHERE 1=1
+                    AND   p.cedula = c.cedula_participan
                 """
     params = {}
 
@@ -153,8 +152,7 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                 FROM calificaciones_promedio c, eventos e, categorias cat, participantes p
                 WHERE e.id = c.evento_id
                 AND   cat.id = c.categoria_id
-                AND   p.cedula = c.cedula_participan 
-                WHERE 1=1                 
+                AND   p.cedula = c.cedula_participan                  
                 """
     params = {}
 
@@ -169,6 +167,7 @@ async def listar_calificacionestot(evento_id: Optional[int] = Query(None),
                 FROM usuarios_eventos ue
                 WHERE ue.evento_id = e.id
                 AND ue.usuario_id = :usuario_id
+            )
         """
 
         params["usuario_id"] = usuario_id
