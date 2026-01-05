@@ -16,6 +16,7 @@ async def get_db():
 async def listar_jurados(
     evento_id: int | None = None,
     cedula: str | None = None,
+    usuario_id: int | None = None,
     db: AsyncSession = Depends(get_db)
 ):
     query = """
@@ -32,6 +33,7 @@ async def listar_jurados(
         JOIN jurados p ON p.cedula = pce.cedula
         JOIN eventos e ON e.id = pce.evento_id
         JOIN categorias c ON c.id = pce.categoria_id
+        JOIN usuarios_eventos ue ON ue.evento_id = e.id
         WHERE 1=1
     """
 
@@ -45,7 +47,11 @@ async def listar_jurados(
         query += " AND pce.cedula = :cedula"
         params["cedula"] = cedula
 
-    query += " ORDER BY e.nombre, c.categoria"
+    if usuario_id:
+        query += " AND ue.usuario_id = :usuario_id"
+        params["usuario_id"] = usuario_id        
+
+    query += " ORDER BY pce.evento_id, pce.categoria_id, pce.cedula"
 
     result = await db.execute(text(query), params)
     rows = result.mappings().all()
