@@ -37,18 +37,18 @@ async def get_db():
 async def listar_calificaciones(usuario_id: int | None = None, 
                                 db: AsyncSession = Depends(get_db)
 ):
-    query = text("""
-                  SELECT 
-                      id,
-                      cedula_jurado,
-                      cedula_participan,
-                      evento_id,
-                      categoria_id,
-                      puntaje
-                  FROM calificaciones c
-                  JOIN usuarios_eventos ue ON ue.evento_id = c.evento_id
-                  WHERE 1=1                  
-                """)
+    query = """
+               SELECT 
+                   id,
+                   cedula_jurado,
+                   cedula_participan,
+                   evento_id,
+                   categoria_id,
+                   puntaje
+               FROM calificaciones c
+               JOIN usuarios_eventos ue ON ue.evento_id = c.evento_id
+               WHERE 1=1                  
+            """
     
     params = {}
 
@@ -58,7 +58,7 @@ async def listar_calificaciones(usuario_id: int | None = None,
 
     query += " ORDER BY c.evento_id, c.categoria_id, c.cedula_participan, c.cedula_jurado"        
 
-    result = await db.execute(query, params)
+    result = await db.execute(text(query), params)
     rows = result.mappings().all()
 
     return {"calificaciones": rows}
