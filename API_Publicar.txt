@@ -148,7 +148,10 @@ Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/a
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/calificaciones?usuario_id=2 (calificaciones)
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/calificacionestot?evento_id=19&usuario_id=2 (calificacionestot)
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/calificacionesranking?evento_id=19&usuario_id=1 (calificacionesranking)
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuario-rol (rol asignado al usuario)
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuarios/nombre/Jorge Gomez 3 (Obtener usuario por nombre) 
 
 
 Crear pantalla de gestión usuarios
 Inlcuir usuario en todas las pantallas
+Revisar roles vs opciones de menú por usuario

@@ -106,3 +106,23 @@ async def obtener_rol_usuario(
         return {"rol": None}
 
     return {"rol": row.rol}
+
+# ============================================
+# 6. Crear usuario
+# ============================================
+@router.post("/usuario")
+async def crear_usuario(usuario: dict, db: AsyncSession = Depends(get_db)):
+
+    print("📌 Crear un usuario en la tabla usuarios:", usuario)
+    
+    query = text("""
+        INSERT INTO usuarios (nombre, email, contrasena, estado, rol)
+        VALUES (:nombre, :email, :contrasena, :estado, :rol)
+        RETURNING *;
+    """)
+
+    result = await db.execute(query, usuario)
+    nuevo_usuario = result.mappings().first()
+    await db.commit()
+
+    return nuevo_usuario
