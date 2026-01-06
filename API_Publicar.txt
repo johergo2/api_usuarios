@@ -151,6 +151,7 @@ Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/a
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuario-rol (rol asignado al usuario)
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuarios/nombre/Jorge Gomez 3 (Obtener usuario por nombre) 
 
+Para ejecutar API de creación de usuario en Curl (CMD): curl -X POST https://api-usuarios-f1im.onrender.com/api/usuario -H "Content-Type: application/json" -d "{\"nombre\": \"Juan Perez\",\"email\": \"juan.perez@email.com\",\"contrasena\": \"123456\",\"estado\": \"ACT\",\"rol\": \"Participante\"}"
 
 Crear pantalla de gestión usuarios
 Inlcuir usuario en todas las pantallas

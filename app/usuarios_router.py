@@ -126,3 +126,48 @@ async def crear_usuario(usuario: dict, db: AsyncSession = Depends(get_db)):
     await db.commit()
 
     return nuevo_usuario
+
+# ============================================
+# 7. Actualizar usuario
+# ============================================
+@router.put("/usuarios/{id}")
+async def actualizar_usuario(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
+
+    datos["id"] = id
+
+    query = text("""
+        UPDATE usuarios
+        SET nombre = :nombre,  
+            email = :email,                       
+            contrasena = :contrasena,                        
+            estado = :estado
+            rol = :rol
+            fecha_actualizacion = CURRENT_TIMESTAMP
+        WHERE id = :id
+        RETURNING *;
+    """)
+
+  
+    result = await db.execute(query, datos)
+    usuario = result.mappings().first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    await db.commit()
+    return usuario
+
+# ============================================
+# 8. Eliminar usuario
+# ============================================
+@router.delete("/usuarios/{id}")
+async def eliminar_usuarios(id: int, db: AsyncSession = Depends(get_db)):
+    query = text("DELETE FROM usuarios WHERE id = :id RETURNING id")
+    result = await db.execute(query, {"id": id})
+    usuario = result.mappings().first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    await db.commit()
+    return {"message": "usuario eliminado correctamente", "id": id}
