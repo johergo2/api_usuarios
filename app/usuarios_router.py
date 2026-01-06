@@ -171,3 +171,14 @@ async def eliminar_usuarios(id: int, db: AsyncSession = Depends(get_db)):
 
     await db.commit()
     return {"message": "usuario eliminado correctamente", "id": id}
+
+# =======================================================
+# 9. Obtener los usuarios y sus eventos asociados
+# =======================================================
+@router.get("/usuarios-eventos")
+async def listar_usuarios_eventos(db: AsyncSession = Depends(get_db)):
+    query = text("SELECT * FROM usuarios_eventos ORDER BY id")
+    result = await db.execute(query)
+    rows = result.mappings().all()
+    return {"usuarios-eventos": rows}
+
