@@ -140,8 +140,8 @@ async def actualizar_usuario(id: int, datos: dict, db: AsyncSession = Depends(ge
         SET nombre = :nombre,  
             email = :email,                       
             contrasena = :contrasena,                        
-            estado = :estado
-            rol = :rol
+            estado = :estado,
+            rol = :rol,
             fecha_actualizacion = CURRENT_TIMESTAMP
         WHERE id = :id
         RETURNING *;
