@@ -136,11 +136,19 @@ https://api-usuarios-f1im.onrender.com/api/usuarios
 
 --   OJO (LOCALMENTE)
 Para ejecutar la pantalla de Login: http://localhost:5173/
-Para ejecutar las API localmente: http://localhost:8000/api/usuarios
+Para ejecutar las API localmente: http://localhost:8000/api/usuarios (En CMD se debe ejecutar .venv\Scripts\activate)
 
 -- OJO (RENDER.COM)
 Para ejecutar la pantalla de Login: https://calificaciones-app.onrender.com
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos?usuario_id=1
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos/19?usuario_id=1
-Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos/20/categorias?usuario_id=1
-Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/participantes-categorias-eventos?evento_id=20&cedula=800923001&usuario_id=2
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/eventos/20/categorias?usuario_id=1 
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/participantes-categorias-eventos?evento_id=20&cedula=800923001&usuario_id=2 (participantes-categorias-eventos)
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/jurados-categorias-eventos?evento_id=19&cedula=66458957&usuario_id=2 (jurados-categorias-eventos)
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/calificaciones?usuario_id=2 (calificaciones)
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/calificacionestot?evento_id=19&usuario_id=2 (calificacionestot)
+Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/calificacionesranking?evento_id=19&usuario_id=1 (calificacionesranking)
+
+
+Crear pantalla de gestión usuarios
+Inlcuir usuario en todas las pantallas

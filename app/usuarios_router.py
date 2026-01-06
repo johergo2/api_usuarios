@@ -83,3 +83,26 @@ async def login(datos: dict, db: AsyncSession = Depends(get_db)):
         "message": "Acceso concedido",
         "usuario": usuario
     }
+
+# =======================================================
+# 5. Obtener usuario y Rol
+# =======================================================
+@router.get("/usuario-rol")
+async def obtener_rol_usuario(
+    usuario_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    query = """
+        SELECT rol
+        FROM usuarios_eventos
+        WHERE usuario_id = :usuario_id
+    """
+    result = await db.execute(text(query), {
+        "usuario_id": usuario_id
+    })
+    row = result.first()
+
+    if not row:
+        return {"rol": None}
+
+    return {"rol": row.rol}
