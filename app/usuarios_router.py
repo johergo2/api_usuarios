@@ -182,3 +182,64 @@ async def listar_usuarios_eventos(db: AsyncSession = Depends(get_db)):
     rows = result.mappings().all()
     return {"usuarios-eventos": rows}
 
+# ============================================
+# 10. Crear usuario evento
+# ============================================
+@router.post("/usuario-evento")
+async def crear_usuario_evento(usuarioEvento: dict, db: AsyncSession = Depends(get_db)):
+
+    print("📌 Crear un usuario en la tabla usuarios:", usuarioEvento)
+    
+    query = text("""
+        INSERT INTO usuarios_eventos (usuario_id, evento_id)
+        VALUES (:usuario_id, :evento_id)
+        RETURNING *;
+    """)
+
+    result = await db.execute(query, usuarioEvento)
+    nuevo_usuarioEvento = result.mappings().first()
+    await db.commit()
+
+    return nuevo_usuarioEvento
+
+
+# ============================================
+# 11. Actualizar usuarios_eventos
+# ============================================
+@router.put("/usuarios-eventos/{id}")
+async def actualizar_usuario_evento(id: int, datos: dict, db: AsyncSession = Depends(get_db)):
+
+    datos["id"] = id
+
+    query = text("""
+        UPDATE usuarios_eventos
+        SET evento_id = :evento_id,
+            fecha_actualizacion = CURRENT_TIMESTAMP
+        WHERE id = :id
+        RETURNING *;
+    """)
+
+  
+    result = await db.execute(query, datos)
+    usuarioEvento = result.mappings().first()
+
+    if not usuarioEvento:
+        raise HTTPException(status_code=404, detail="Usuario evento no encontrado")
+
+    await db.commit()
+    return usuarioEvento
+
+# ============================================
+# 12. Eliminar usuarios_eventos
+# ============================================
+@router.delete("/usuarios-eventos/{id}")
+async def eliminar_usuarios_eventos(id: int, db: AsyncSession = Depends(get_db)):
+    query = text("DELETE FROM usuarios_eventos WHERE id = :id RETURNING id")
+    result = await db.execute(query, {"id": id})
+    usuarioEvento = result.mappings().first()
+
+    if not usuarioEvento:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    await db.commit()
+    return {"message": "usuario_evento eliminado correctamente", "id": id}
