@@ -153,9 +153,20 @@ Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/a
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuarios/nombre/Jorge Gomez 3 (Obtener usuario por nombre) 
 Para ejecutar API de creación de usuario en Curl (CMD): curl -X POST https://api-usuarios-f1im.onrender.com/api/usuario -H "Content-Type: application/json" -d "{\"nombre\": \"Juan Perez\",\"email\": \"juan.perez@email.com\",\"contrasena\": \"123456\",\"estado\": \"ACT\",\"rol\": \"Participante\"}"
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuarios-eventos (Lista todos los registros de la tabla usuarios_eventos)
+Para ejecutar API de creación de registro en la tabla usuarios_eventos en Curl (CMD): curl -X POST https://api-usuarios-f1im.onrender.com/api/usuario-evento -H "Content-Type: application/json" -d "{\"usuario_id\":8,\"evento_id\":19}"
 
 
+-- Aplicar validaciones:
+1. Evento no se puede borrar si tiene categorias asignadas
+2. Categorías no se puede borrar si tiene participantes o jurados asignados
+3. Participantes no se pueden borrar si tienen calificaciones
+4. Jurados no se pueden borrar si tienen calificaciones
 
-Crear pantalla de gestión usuarios
-Inlcuir usuario en todas las pantallas
-Revisar roles vs opciones de menú por usuario
+-- Preparar Scripts para la creación de tablas y subirlos a Github (incluyendo inserts básicos iniciales)
+
+
+-- TENER EN CUENTA --
+1- Cuando se crea la tabla usuarios se debe ejecutar script para crear usuario administrador de la aplicación en la tabla usuarios (El usuario 
+   Administrador siempre debe tener ID = 1).
+
+
