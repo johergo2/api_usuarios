@@ -2,6 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
+from pydantic import BaseModel
+
+class UsuarioEventoCreate(BaseModel):
+    usuario_id: int
+    evento_id: int
+
 
 router = APIRouter()
 
@@ -186,7 +192,7 @@ async def listar_usuarios_eventos(db: AsyncSession = Depends(get_db)):
 # 10. Crear usuario evento
 # ============================================
 @router.post("/usuario-evento")
-async def crear_usuario_evento(usuarioEvento: dict, db: AsyncSession = Depends(get_db)):
+async def crear_usuario_evento(usuarioEvento: UsuarioEventoCreate, db: AsyncSession = Depends(get_db)):
 
     print("📌 Crear un usuario en la tabla usuarios:", usuarioEvento)
     
@@ -196,7 +202,7 @@ async def crear_usuario_evento(usuarioEvento: dict, db: AsyncSession = Depends(g
         RETURNING *;
     """)
 
-    result = await db.execute(query, usuarioEvento)
+    result = await db.execute(query, usuarioEvento.dict())
     nuevo_usuarioEvento = result.mappings().first()
     await db.commit()
 
