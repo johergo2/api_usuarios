@@ -143,12 +143,25 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
 # ============================================
 @router.delete("/eventos/{id}")
 async def eliminar_evento(id: int, db: AsyncSession = Depends(get_db)):
-    query = text("DELETE FROM eventos WHERE id = :id RETURNING id")
-    result = await db.execute(query, {"id": id})
-    evento = result.mappings().first()
+    try:
+        # Eliminar registro de la tabla usuarios_eventos
+        await db.execute(
+            text("DELETE FROM usuarios_eventos WHERE evento_id = :id"),
+            {"id":id}
+        )
+        # Eliminar el registro de la tablas eventos    
+        result = await db.execute(text("DELETE FROM eventos WHERE id = :id RETURNING id"), 
+                                  {"id": id})
+    
+        evento = result.mappings().first()
 
-    if not evento:
-        raise HTTPException(status_code=404, detail="Evento no encontrado")
-
-    await db.commit()
-    return {"message": "Evento eliminado correctamente", "id": id}
+        if not evento:
+            await db.rollback()
+            raise HTTPException(status_code=404, detail="Evento no encontrado")
+        
+        await db.commit()
+        return {"message": "Evento eliminado correctamente", "id": id}
+    
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al eliminar evento: {str(e)}")
