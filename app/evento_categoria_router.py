@@ -77,15 +77,16 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
         
         try:
             # Eliminar categorías actuales
-            await db.execute(
-                text("DELETE FROM eventos_categorias WHERE evento_id = :evento_id"),
-                {"evento_id": evento_id}
-            )
+            #await db.execute(
+            #    text("DELETE FROM eventos_categorias WHERE evento_id = :evento_id"),
+            #    {"evento_id": evento_id}
+            #)
 
             # Insertar nuevas categorías
             insert_query = text("""
                 INSERT INTO eventos_categorias (evento_id, categoria_id)
                 VALUES (:evento_id, :categoria_id)
+				ON CONFLICT DO NOTHING
             """)
 
             for categoria_id in categorias:
