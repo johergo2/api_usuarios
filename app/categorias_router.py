@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -86,12 +87,19 @@ async def actualizar_categoria(id: int, datos: dict, db: AsyncSession = Depends(
 # ============================================
 @router.delete("/categoria/{id}")
 async def eliminar_categoria(id: int, db: AsyncSession = Depends(get_db)):
-    query = text("DELETE FROM categorias WHERE id = :id RETURNING id")
-    result = await db.execute(query, {"id": id})
-    categoria = result.mappings().first()
+    try:
 
-    if not categoria:
-        raise HTTPException(status_code=404, detail="Categoria no encontrada")
+        query = text("DELETE FROM categorias WHERE id = :id RETURNING id")
+        result = await db.execute(query, {"id": id})
+        categoria = result.mappings().first()
 
-    await db.commit()
-    return {"message": "categoria eliminada correctamente", "id": id}
+        if not categoria:
+            await db.rollback()
+            raise HTTPException(status_code=404, detail="Categoria no encontrada")
+
+        await db.commit()
+        return {"message": "categoria eliminada correctamente", "id": id}
+        
+    except IntegrityError:
+       await db.rollback()
+       raise HTTPException(status_code=409, detail="No se puede eliminar Categoría tiene dependencias")
