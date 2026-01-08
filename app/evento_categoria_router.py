@@ -119,6 +119,28 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
 @router.delete("/eventos/{evento_id}/categorias/{categoria_id}")
 async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: AsyncSession = Depends(get_db)):
      try:
+          
+          # 1️⃣ VALIDAR si existen participantes asociados
+          existe = await db.execute(
+              text("""
+                  SELECT 1
+                  FROM participantes_categorias_eventos
+                  WHERE evento_id = :evento_id
+                  AND categoria_id = :categoria_id
+                  LIMIT 1
+              """),
+              {
+                  "evento_id": evento_id,
+                  "categoria_id": categoria_id
+              }
+          )          
+
+          if existe.first():
+              raise HTTPException(
+                  status_code=409,
+                  detail="No se puede eliminar la categoría porque tiene participantes asociados"
+              )
+     
           query = text("""DELETE FROM eventos_categorias
                        WHERE evento_id = :evento_id
                        AND categoria_id = :categoria_id
@@ -142,4 +164,4 @@ async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: Asyn
                 }
      except IntegrityError:
           await db.rollback()
-          raise HTTPException(status_code=409, detail="No se puede eliminar categoria con participantes o jurados")
+          raise HTTPException(status_code=409, detail="No se puede eliminar categoria asociada a evento")
