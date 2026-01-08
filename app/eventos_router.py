@@ -34,16 +34,24 @@ def normalizar_fecha(fecha):
 # ============================================
 @router.get("/eventos")
 async def listar_eventos(usuario_id: int, db: AsyncSession = Depends(get_db)):
-    query = text("""SELECT distinct e.*
-                    FROM eventos e 
-                    INNER JOIN usuarios_eventos ue
-                      ON ue.evento_id = e.id
-                    WHERE ue.usuario_id = :usuario_id
-                    ORDER BY e.id
-                 """)
-    result = await db.execute(query, {"usuario_id": usuario_id})
-    rows = result.mappings().all()
-    return {"eventos": rows}
+    try:
+        query = text("""SELECT distinct e.*
+                        FROM eventos e 
+                        INNER JOIN usuarios_eventos ue
+                        ON ue.evento_id = e.id
+                        WHERE ue.usuario_id = :usuario_id
+                        ORDER BY e.id
+                    """)
+        result = await db.execute(query, {"usuario_id": usuario_id})
+        rows = result.mappings().all()
+        return {"eventos": rows}
+    
+    except Exception as e:
+        print("ERROR BACKEND:", e)  # 👈 CLAVE
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )    
 
 
 # ============================================
