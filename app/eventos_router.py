@@ -3,6 +3,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
 from datetime import datetime, date
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -144,6 +145,7 @@ async def actualizar_evento(id: int, datos: dict, db: AsyncSession = Depends(get
 @router.delete("/eventos/{id}")
 async def eliminar_evento(id: int, db: AsyncSession = Depends(get_db)):
     try:
+
         # Eliminar registro de la tabla usuarios_eventos
         await db.execute(
             text("DELETE FROM usuarios_eventos WHERE evento_id = :id"),
@@ -162,6 +164,6 @@ async def eliminar_evento(id: int, db: AsyncSession = Depends(get_db)):
         await db.commit()
         return {"message": "Evento eliminado correctamente", "id": id}
     
-    except Exception as e:
+    except IntegrityError:
         await db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error al eliminar evento: {str(e)}")
+        raise HTTPException(status_code=409, detail="No se puede eliminar evento porque tiene categorías asociadas")
