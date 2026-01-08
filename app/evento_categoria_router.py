@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -117,25 +118,28 @@ async def asignar_categorias_evento(evento_id: int, data: dict, db: AsyncSession
 # ============================================ 
 @router.delete("/eventos/{evento_id}/categorias/{categoria_id}")
 async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: AsyncSession = Depends(get_db)):
-     
-     query = text("""DELETE FROM eventos_categorias
-                  WHERE evento_id = :evento_id
-                  AND categoria_id = :categoria_id
-                  RETURNING id""")
+     try:
+          query = text("""DELETE FROM eventos_categorias
+                       WHERE evento_id = :evento_id
+                       AND categoria_id = :categoria_id
+                       RETURNING id""")
 
-     result = await db.execute(query, {"evento_id": evento_id,
+          result = await db.execute(query, {"evento_id": evento_id,
                                       "categoria_id": categoria_id})
-     eliminado = result.first()
+          eliminado = result.first()
 
-     if not eliminado:
-            raise HTTPException(
-                status_code=404,
-                detail="La categoría no está asignada a este evento"
-        )     
-     await db.commit()
+          if not eliminado:
+                 await db.rollback()
+                 raise HTTPException(status_code=404,
+                                     detail="La categoría no está asignada a este evento"
+                                    )     
+          await db.commit()
 
-     return {
-        "message": "Categoría eliminada del evento",
-        "evento_id": evento_id,
-        "categoria_id": categoria_id
-     }
+          return {
+                  "message": "Categoría eliminada del evento",
+                  "evento_id": evento_id,
+                  "categoria_id": categoria_id
+                }
+     except IntegrityError:
+          await db.rollback()
+          raise HTTPException(status_code=409, detail="No se puede eliminar categoria con participantes o jurados")
