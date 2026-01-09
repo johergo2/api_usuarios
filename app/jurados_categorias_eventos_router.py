@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import SessionLocal
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -130,79 +131,76 @@ async def categorias_jurado_evento(
         "categorias": categorias
     }
 
+# ===================================================
+# 3. Eliminar jurado asociadas a evento y categoría
+# ===================================================
 @router.delete(
     "/jurados/{cedula}/eventos/{evento_id}/categorias/{categoria_id}"
 )
 async def eliminar_categoria_jurado(
-    cedula: str,
-    evento_id: int,
-    categoria_id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    query = text("""
-        DELETE FROM jurados_categorias_eventos
-        WHERE cedula = :cedula
-          AND evento_id = :evento_id
-          AND categoria_id = :categoria_id
-        RETURNING id
-    """)
+                                    cedula: str,
+                                    evento_id: int,
+                                    categoria_id: int,
+                                    db: AsyncSession = Depends(get_db)
+                                    ):
+    try:
+        # 1️⃣ VALIDAR si existen calificaciones de este jurado para este evento y categoría
+        calificaciones = await db.execute(
+                                          text("""
+                                               SELECT 1
+                                               FROM calificaciones
+                                               WHERE cedula_jurado = :cedula
+                                               AND evento_id = :evento_id
+                                               AND categoria_id = :categoria_id
+                                               LIMIT 1
+                                               """),
+                                               {
+                                                   "cedula": cedula,
+                                                   "evento_id": evento_id,
+                                                   "categoria_id": categoria_id
+                                               }
+                                          )          
 
-    result = await db.execute(
-        query,
-        {
+        if calificaciones.first():                                            
+            raise HTTPException(
+                status_code=409,
+                detail="No se puede eliminar jurado asociado a evento y categoría tiene calificaciones"
+            )   
+         
+        query = text("""
+            DELETE FROM jurados_categorias_eventos
+            WHERE cedula = :cedula
+            AND evento_id = :evento_id
+            AND categoria_id = :categoria_id
+            RETURNING id
+        """)
+
+        result = await db.execute(
+            query,
+            {
+                "cedula": cedula,
+                "evento_id": evento_id,
+                "categoria_id": categoria_id
+            }
+        )
+
+        eliminado = result.first()
+
+        if not eliminado:
+            raise HTTPException(
+                status_code=404,
+                detail="La asignación no existe"
+            )
+
+        await db.commit()
+
+        return {
+            "message": "Categoría eliminada del jurado",
             "cedula": cedula,
             "evento_id": evento_id,
             "categoria_id": categoria_id
         }
-    )
 
-    eliminado = result.first()
-
-    if not eliminado:
-        raise HTTPException(
-            status_code=404,
-            detail="La asignación no existe"
-        )
-
-    await db.commit()
-
-    return {
-        "message": "Categoría eliminada del jurado",
-        "cedula": cedula,
-        "evento_id": evento_id,
-        "categoria_id": categoria_id
-    }
-
-@router.delete("/jurados/{cedula}/eventos/{evento_id}")
-async def eliminar_jurado_evento(
-    cedula: str,
-    evento_id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    query = text("""
-        DELETE FROM jurados_categ_eventos
-        WHERE cedula = :cedula
-          AND evento_id = :evento_id
-        RETURNING id
-    """)
-
-    result = await db.execute(
-        query,
-        {"cedula": cedula, "evento_id": evento_id}
-    )
-
-    eliminados = result.fetchall()
-
-    if not eliminados:
-        raise HTTPException(
-            status_code=404,
-            detail="El jurado no tiene categorías en este evento"
-        )
-
-    await db.commit()
-
-    return {
-        "message": "Jurado eliminado del evento",
-        "total_categorias": len(eliminados)
-    }
-
+    except HTTPException:
+       await db.rollback()
+       raise
