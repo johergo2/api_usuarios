@@ -143,7 +143,7 @@ async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: Asyn
               )
           # 2️⃣ VALIDAR si existen jurados asociados
           jurados = await db.execute(
-               text(""""
+               text("""
                     SELECT 1
                     FROM jurados_categorias_eventos
                     WHERE evento_id = :evento_id
