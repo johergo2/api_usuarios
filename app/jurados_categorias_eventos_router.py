@@ -132,7 +132,7 @@ async def categorias_jurado_evento(
     }
 
 # ===================================================
-# 3. Eliminar jurado asociadas a evento y categoría
+# 3. Eliminar jurado asociado a evento y categoría
 # ===================================================
 @router.delete(
     "/jurados/{cedula}/eventos/{evento_id}/categorias/{categoria_id}"
@@ -195,7 +195,7 @@ async def eliminar_categoria_jurado(
         await db.commit()
 
         return {
-            "message": "Categoría eliminada del jurado",
+            "message": "Jurado eliminado para el evento y categoría, ",
             "cedula": cedula,
             "evento_id": evento_id,
             "categoria_id": categoria_id
