@@ -121,7 +121,7 @@ async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: Asyn
      try:
           
           # 1️⃣ VALIDAR si existen participantes asociados
-          existe = await db.execute(
+          participantes = await db.execute(
               text("""
                   SELECT 1
                   FROM participantes_categorias_eventos
@@ -135,11 +135,32 @@ async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: Asyn
               }
           )          
 
-          if existe.first():
+          if participantes.first():
               raise HTTPException(
                   status_code=409,
-                  detail="No se puede eliminar categoría con participantes asociados2"
+                  detail="No se puede eliminar categoría con participantes asociados"
               )
+          # 2️⃣ VALIDAR si existen jurados asociados
+          jurados = await db.execute(
+               text(""""
+                    SELECT 1
+                    FROM jurados_categorias_eventos
+                    WHERE evento_id = :evento_id
+                    AND   categoria_id = :categoria_id
+                    LIMIT 1
+               """
+               ),
+               {
+                    "evento_id": evento_id,
+                    "categoria_id": categoria_id
+               }
+          )
+
+          if jurados.first():
+               raise HTTPException(
+                    status_code=409,
+                    detail="No se puede eliminar categoría con jurados asociados"
+               )
      
           query = text("""DELETE FROM eventos_categorias
                        WHERE evento_id = :evento_id
