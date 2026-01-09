@@ -138,7 +138,7 @@ async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: Asyn
           if existe.first():
               raise HTTPException(
                   status_code=409,
-                  detail="No se puede eliminar la categoría porque tiene participantes asociados"
+                  detail="No se puede eliminar categoría con participantes asociados2"
               )
      
           query = text("""DELETE FROM eventos_categorias
@@ -164,4 +164,4 @@ async def eliminar_categorias_evento(evento_id: int, categoria_id: int, db: Asyn
                 }
      except IntegrityError:
           await db.rollback()
-          raise HTTPException(status_code=409, detail="No se puede eliminar categoria asociada a evento")
+          raise HTTPException(status_code=409, detail="No se puede eliminar categoria asociada a evento1")
