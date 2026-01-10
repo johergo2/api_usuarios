@@ -154,7 +154,11 @@ Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/a
 Para ejecutar API de creación de usuario en Curl (CMD): curl -X POST https://api-usuarios-f1im.onrender.com/api/usuario -H "Content-Type: application/json" -d "{\"nombre\": \"Juan Perez\",\"email\": \"juan.perez@email.com\",\"contrasena\": \"123456\",\"estado\": \"ACT\",\"rol\": \"Participante\"}"
 Para ejecutar las API desde render.com: https://api-usuarios-f1im.onrender.com/api/usuarios-eventos (Lista todos los registros de la tabla usuarios_eventos)
 Para ejecutar API de creación de registro en la tabla usuarios_eventos en Curl (CMD): curl -X POST https://api-usuarios-f1im.onrender.com/api/usuario-evento -H "Content-Type: application/json" -d "{\"usuario_id\":8,\"evento_id\":19}"
+Para ejecutar API de borrado de registro en la tabla eventos_categorias en Curl (CMD): curl -X DELETE https://api-usuarios-f1im.onrender.com/api/eventos/23/categorias/17
+Para ejecutar API de borrado de registro en la tabla jurados_categorias_eventos en Curl (CMD): curl -X DELETE https://api-usuarios-f1im.onrender.com/api/jurados/33969414/eventos/23/categorias/17
+Para ejecutar API de borrado de registro en la tabla participantes_categorias_eventos en Curl (CMD): curl -X DELETE https://api-usuarios-f1im.onrender.com/api/participantes/1123567999/eventos/23/categorias/17
 
+-- Preparar Scripts para la creación de tablas y subirlos a Github (incluyendo inserts básicos iniciales)
 
 -- Aplicar validaciones:
 1. Evento no se puede borrar si tiene categorias asignadas
@@ -162,7 +166,7 @@ Para ejecutar API de creación de registro en la tabla usuarios_eventos en Curl 
 3. Participantes no se pueden borrar si tienen calificaciones
 4. Jurados no se pueden borrar si tienen calificaciones
 
--- Preparar Scripts para la creación de tablas y subirlos a Github (incluyendo inserts básicos iniciales)
+
 
 
 -- TENER EN CUENTA --

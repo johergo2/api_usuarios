@@ -183,7 +183,7 @@ async def eliminar_usuarios(id: int, db: AsyncSession = Depends(get_db)):
 # =======================================================
 @router.get("/usuarios-eventos")
 async def listar_usuarios_eventos(db: AsyncSession = Depends(get_db)):
-    query = text("SELECT * FROM usuarios_eventos ORDER BY id")
+    query = text("SELECT * FROM usuarios_eventos ORDER BY usuario_id")
     result = await db.execute(query)
     rows = result.mappings().all()
     return {"usuarios-eventos": rows}
