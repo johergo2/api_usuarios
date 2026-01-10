@@ -164,7 +164,7 @@ async def eliminar_categoria_participante(
         if calificaciones.first():                                            
             raise HTTPException(
                 status_code=409,
-                detail="No se puede eliminar jurado asociado a evento y categoría tiene calificaciones"
+                detail="No se puede eliminar participante asociado a evento y categoría tiene calificaciones"
             ) 	
 			
 		query = text("""
