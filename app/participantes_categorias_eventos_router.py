@@ -131,7 +131,9 @@ async def categorias_participante_evento(
         "evento_id": evento_id,
         "categorias": categorias
     }
-
+#========================================================
+# Eliminar participantes asociados a evento y categoría
+#========================================================
 @router.delete(
     "/participantes/{cedula}/eventos/{evento_id}/categorias/{categoria_id}"
 )
@@ -141,70 +143,64 @@ async def eliminar_categoria_participante(
     categoria_id: int,
     db: AsyncSession = Depends(get_db)
 ):
-    query = text("""
-        DELETE FROM participantes_categorias_eventos
-        WHERE cedula = :cedula
-          AND evento_id = :evento_id
-          AND categoria_id = :categoria_id
-        RETURNING id
-    """)
+	try:
+        # 1️⃣ VALIDAR si existen calificaciones de este participante para este evento y categoría
+        calificaciones = await db.execute(
+                                          text("""
+                                               SELECT 1
+                                               FROM calificaciones
+                                               WHERE cedula_participan = :cedula
+                                               AND evento_id = :evento_id
+                                               AND categoria_id = :categoria_id
+                                               LIMIT 1
+                                               """),
+                                               {
+                                                   "cedula": cedula,
+                                                   "evento_id": evento_id,
+                                                   "categoria_id": categoria_id
+                                               }
+                                          )          
 
-    result = await db.execute(
-        query,
-        {
-            "cedula": cedula,
-            "evento_id": evento_id,
-            "categoria_id": categoria_id
-        }
-    )
+        if calificaciones.first():                                            
+            raise HTTPException(
+                status_code=409,
+                detail="No se puede eliminar jurado asociado a evento y categoría tiene calificaciones"
+            ) 	
+			
+		query = text("""
+			DELETE FROM participantes_categorias_eventos
+			WHERE cedula = :cedula
+			  AND evento_id = :evento_id
+			  AND categoria_id = :categoria_id
+			RETURNING id
+		""")
 
-    eliminado = result.first()
+		result = await db.execute(
+			query,
+			{
+				"cedula": cedula,
+				"evento_id": evento_id,
+				"categoria_id": categoria_id
+			}
+		)
 
-    if not eliminado:
-        raise HTTPException(
-            status_code=404,
-            detail="La asignación no existe"
-        )
+		eliminado = result.first()
 
-    await db.commit()
+		if not eliminado:
+			raise HTTPException(
+				status_code=404,
+				detail="La asignación no existe"
+			)
 
-    return {
-        "message": "Categoría eliminada del participante",
-        "cedula": cedula,
-        "evento_id": evento_id,
-        "categoria_id": categoria_id
-    }
+		await db.commit()
 
-@router.delete("/participantes/{cedula}/eventos/{evento_id}")
-async def eliminar_participante_evento(
-    cedula: str,
-    evento_id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    query = text("""
-        DELETE FROM participantes_categ_eventos
-        WHERE cedula = :cedula
-          AND evento_id = :evento_id
-        RETURNING id
-    """)
+		return {
+			"message": "Participante eliminado para el evento y categoría, ",
+			"cedula": cedula,
+			"evento_id": evento_id,
+			"categoria_id": categoria_id
+		}
 
-    result = await db.execute(
-        query,
-        {"cedula": cedula, "evento_id": evento_id}
-    )
-
-    eliminados = result.fetchall()
-
-    if not eliminados:
-        raise HTTPException(
-            status_code=404,
-            detail="El participante no tiene categorías en este evento"
-        )
-
-    await db.commit()
-
-    return {
-        "message": "Participante eliminado del evento",
-        "total_categorias": len(eliminados)
-    }
-
+    except HTTPException:
+       await db.rollback()
+       raise
