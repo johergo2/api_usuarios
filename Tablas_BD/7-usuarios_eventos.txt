@@ -1,0 +1,39 @@
+
+-- DROP TABLE IF EXISTS public.usuarios_eventos;
+
+CREATE TABLE IF NOT EXISTS public.usuarios_eventos
+(
+    id integer NOT NULL DEFAULT nextval('usuarios_eventos_id_seq'::regclass),
+    usuario_id integer NOT NULL,
+    evento_id integer NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT usuarios_eventos_pkey PRIMARY KEY (id),
+    CONSTRAINT uq_usuario_evento UNIQUE (usuario_id, evento_id),
+    CONSTRAINT fk_evento_usueven FOREIGN KEY (evento_id)
+        REFERENCES public.eventos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_usuario_usueven FOREIGN KEY (usuario_id)
+        REFERENCES public.usuarios (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.usuarios_eventos
+    OWNER to usuario_api;
+
+-- Trigger: trg_set_fecha_actualizacion_usueven
+
+-- DROP TRIGGER IF EXISTS trg_set_fecha_actualizacion_usueven ON public.usuarios_eventos;
+
+CREATE OR REPLACE TRIGGER trg_set_fecha_actualizacion_usueven
+    BEFORE UPDATE 
+    ON public.usuarios_eventos
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_fecha_actualizacion();
+
+ALTER TABLE public.usuarios_eventos
+    DISABLE TRIGGER trg_set_fecha_actualizacion_usueven;

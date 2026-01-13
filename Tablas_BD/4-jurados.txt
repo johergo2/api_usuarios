@@ -1,0 +1,29 @@
+
+-- DROP TABLE IF EXISTS public.jurados;
+
+CREATE TABLE IF NOT EXISTS public.jurados
+(
+    id integer NOT NULL DEFAULT nextval('jurados_id_seq'::regclass),
+    cedula character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    nombre character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    observacion text COLLATE pg_catalog."default",
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT jurados_pkey PRIMARY KEY (id),
+    CONSTRAINT jurados_cedula_key UNIQUE (cedula)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.jurados
+    OWNER to usuario_api;
+
+-- Trigger: trg_set_fecha_actualizacion_jur
+
+-- DROP TRIGGER IF EXISTS trg_set_fecha_actualizacion_jur ON public.jurados;
+
+CREATE OR REPLACE TRIGGER trg_set_fecha_actualizacion_jur
+    BEFORE UPDATE 
+    ON public.jurados
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_fecha_actualizacion();

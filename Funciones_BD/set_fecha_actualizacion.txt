@@ -1,0 +1,16 @@
+-- DROP FUNCTION IF EXISTS public.set_fecha_actualizacion();
+
+CREATE OR REPLACE FUNCTION public.set_fecha_actualizacion()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    NEW.fecha_actualizacion = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.set_fecha_actualizacion()
+    OWNER TO usuario_api;

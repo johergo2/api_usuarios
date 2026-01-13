@@ -1,0 +1,17 @@
+
+-- DROP TABLE IF EXISTS public.categorias;
+
+CREATE TABLE IF NOT EXISTS public.categorias
+(
+    id integer NOT NULL DEFAULT nextval('categorias_id_seq'::regclass),
+    categoria character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT categorias_pkey PRIMARY KEY (id),
+    CONSTRAINT categorias_categoria_key UNIQUE (categoria)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.categorias
+    OWNER to usuario_api;

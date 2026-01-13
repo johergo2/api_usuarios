@@ -1,0 +1,42 @@
+
+-- DROP TABLE IF EXISTS public.calificaciones_promedio;
+
+CREATE TABLE IF NOT EXISTS public.calificaciones_promedio
+(
+    id integer NOT NULL DEFAULT nextval('calificaciones_promedio_id_seq'::regclass),
+    cedula_participan character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    evento_id integer NOT NULL,
+    categoria_id integer NOT NULL,
+    promedio numeric(7,4) NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT calificaciones_promedio_pkey PRIMARY KEY (id),
+    CONSTRAINT uq_calificaciones_promedio UNIQUE (cedula_participan, evento_id, categoria_id),
+    CONSTRAINT fk_categoria_calificaciones_prom FOREIGN KEY (categoria_id)
+        REFERENCES public.categorias (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_cedula_participan_calificaciones_prom FOREIGN KEY (cedula_participan)
+        REFERENCES public.participantes (cedula) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_evento_calificaciones_prom FOREIGN KEY (evento_id)
+        REFERENCES public.eventos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.calificaciones_promedio
+    OWNER to usuario_api;
+
+-- Trigger: trg_set_fecha_actualizacion_prom
+
+-- DROP TRIGGER IF EXISTS trg_set_fecha_actualizacion_prom ON public.calificaciones_promedio;
+
+CREATE OR REPLACE TRIGGER trg_set_fecha_actualizacion_prom
+    BEFORE UPDATE 
+    ON public.calificaciones_promedio
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_fecha_actualizacion();

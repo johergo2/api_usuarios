@@ -1,0 +1,43 @@
+
+-- DROP TABLE IF EXISTS public.eventos;
+
+CREATE TABLE IF NOT EXISTS public.eventos
+(
+    id integer NOT NULL DEFAULT nextval('eventos_id_seq'::regclass),
+    nombre character varying(250) COLLATE pg_catalog."default" NOT NULL,
+    descripcion text COLLATE pg_catalog."default",
+    fecha_evento date,
+    hora_evento time without time zone,
+    lugar character varying(200) COLLATE pg_catalog."default",
+    tipo character varying(100) COLLATE pg_catalog."default",
+    estado character varying(3) COLLATE pg_catalog."default" NOT NULL DEFAULT 'ACT'::character varying,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT eventos_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.eventos
+    OWNER to usuario_api;
+
+COMMENT ON TABLE public.eventos
+    IS 'Tabla que almacena los eventos o competencias donde participarán los concursantes';
+
+COMMENT ON COLUMN public.eventos.id
+    IS 'Identificador único del evento (autoincremental)';
+
+COMMENT ON COLUMN public.eventos.nombre
+    IS 'Nombre del evento o competencia';
+
+COMMENT ON COLUMN public.eventos.descripcion
+    IS 'Descripción detallada del evento';
+
+COMMENT ON COLUMN public.eventos.lugar
+    IS 'Lugar donde se llevará a cabo el evento';
+
+COMMENT ON COLUMN public.eventos.tipo
+    IS 'Tipo de evento: deportes, baile, académico, etc';
+
+COMMENT ON COLUMN public.eventos.estado
+    IS 'Estado del evento: ACT = Activo, INA = Inactivo';

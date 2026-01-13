@@ -1,0 +1,31 @@
+
+-- DROP TABLE IF EXISTS public.jurados_categorias_eventos;
+
+CREATE TABLE IF NOT EXISTS public.jurados_categorias_eventos
+(
+    id integer NOT NULL DEFAULT nextval('jurados_categorias_eventos_id_seq'::regclass),
+    cedula character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    evento_id integer NOT NULL,
+    categoria_id integer NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT jurados_categorias_eventos_pkey PRIMARY KEY (id),
+    CONSTRAINT uq_jurados_categorias_event UNIQUE (cedula, evento_id, categoria_id),
+    CONSTRAINT fk_categoria_juradoscatev FOREIGN KEY (categoria_id)
+        REFERENCES public.categorias (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_cedula_juradoscatev FOREIGN KEY (cedula)
+        REFERENCES public.jurados (cedula) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_evento_juradoscatev FOREIGN KEY (evento_id)
+        REFERENCES public.eventos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.jurados_categorias_eventos
+    OWNER to usuario_api;

@@ -1,0 +1,32 @@
+
+-- DROP TABLE IF EXISTS public.usuarios;
+
+CREATE TABLE IF NOT EXISTS public.usuarios
+(
+    id integer NOT NULL DEFAULT nextval('usuarios_id_seq'::regclass),
+    nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    contrasena character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado character varying(3) COLLATE pg_catalog."default" NOT NULL DEFAULT 'ACT'::character varying,
+    rol character varying(20) COLLATE pg_catalog."default" NOT NULL DEFAULT 'Participante'::character varying,
+    CONSTRAINT usuarios_pkey PRIMARY KEY (id),
+    CONSTRAINT usuarios_email_key UNIQUE (email),
+    CONSTRAINT usuarios_rol_check CHECK (rol::text = ANY (ARRAY['Administrador'::character varying, 'Jurado'::character varying, 'Participante'::character varying]::text[]))
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.usuarios
+    OWNER to usuario_api;
+
+-- Trigger: trg_set_fecha_actualizacion
+
+-- DROP TRIGGER IF EXISTS trg_set_fecha_actualizacion ON public.usuarios;
+
+CREATE OR REPLACE TRIGGER trg_set_fecha_actualizacion
+    BEFORE UPDATE 
+    ON public.usuarios
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_fecha_actualizacion();

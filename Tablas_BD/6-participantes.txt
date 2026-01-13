@@ -1,0 +1,40 @@
+
+-- DROP TABLE IF EXISTS public.participantes;
+
+CREATE TABLE IF NOT EXISTS public.participantes
+(
+    id integer NOT NULL DEFAULT nextval('participantes_id_seq'::regclass),
+    cedula character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    nombre character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    tipo character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    observacion text COLLATE pg_catalog."default",
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT participantes_pkey PRIMARY KEY (id),
+    CONSTRAINT participantes_cedula_key UNIQUE (cedula)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.participantes
+    OWNER to usuario_api;
+
+-- Trigger: trg_set_fecha_actualizacion
+
+-- DROP TRIGGER IF EXISTS trg_set_fecha_actualizacion ON public.participantes;
+
+CREATE OR REPLACE TRIGGER trg_set_fecha_actualizacion
+    BEFORE UPDATE 
+    ON public.participantes
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_fecha_actualizacion();
+
+-- Trigger: trg_set_fecha_actualizacion_part
+
+-- DROP TRIGGER IF EXISTS trg_set_fecha_actualizacion_part ON public.participantes;
+
+CREATE OR REPLACE TRIGGER trg_set_fecha_actualizacion_part
+    BEFORE UPDATE 
+    ON public.participantes
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_fecha_actualizacion();

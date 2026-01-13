@@ -157,6 +157,11 @@ Para ejecutar API de creación de registro en la tabla usuarios_eventos en Curl 
 Para ejecutar API de borrado de registro en la tabla eventos_categorias en Curl (CMD): curl -X DELETE https://api-usuarios-f1im.onrender.com/api/eventos/23/categorias/17
 Para ejecutar API de borrado de registro en la tabla jurados_categorias_eventos en Curl (CMD): curl -X DELETE https://api-usuarios-f1im.onrender.com/api/jurados/33969414/eventos/23/categorias/17
 Para ejecutar API de borrado de registro en la tabla participantes_categorias_eventos en Curl (CMD): curl -X DELETE https://api-usuarios-f1im.onrender.com/api/participantes/1123567999/eventos/23/categorias/17
+Para ejecutar API de crear eventos en la tabla eventos en Curl (CMD): curl -X POST https://api-usuarios-f1im.onrender.com/api/eventos -H "Content-Type: application/json" -d "{\"nombre\":\"Evento de prueba\",\"descripcion\":\"Evento creado desde curl\",\"fecha_evento\":\"2026-01-15\",\"tipo\":\"Otro\",\"lugar\":\"Cali\",\"estado\":\"ACT\"}"
+
+
+
+
 
 -- Preparar Scripts para la creación de tablas y subirlos a Github (incluyendo inserts básicos iniciales)
 

@@ -1,0 +1,31 @@
+
+-- DROP TABLE IF EXISTS public.participantes_categorias_eventos;
+
+CREATE TABLE IF NOT EXISTS public.participantes_categorias_eventos
+(
+    id integer NOT NULL DEFAULT nextval('participantes_categorias_eventos_id_seq'::regclass),
+    cedula character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    evento_id integer NOT NULL,
+    categoria_id integer NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT participantes_categorias_eventos_pkey PRIMARY KEY (id),
+    CONSTRAINT uq_partic_categorias_event UNIQUE (cedula, evento_id, categoria_id),
+    CONSTRAINT fk_categoria_partcatev FOREIGN KEY (categoria_id)
+        REFERENCES public.categorias (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_cedula_partcatev FOREIGN KEY (cedula)
+        REFERENCES public.participantes (cedula) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_evento_partcatev FOREIGN KEY (evento_id)
+        REFERENCES public.eventos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.participantes_categorias_eventos
+    OWNER to usuario_api;

@@ -1,0 +1,37 @@
+
+-- DROP TABLE IF EXISTS public.calificaciones;
+
+CREATE TABLE IF NOT EXISTS public.calificaciones
+(
+    id integer NOT NULL DEFAULT nextval('calificaciones_id_seq'::regclass),
+    cedula_jurado character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    cedula_participan character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    evento_id integer NOT NULL,
+    categoria_id integer NOT NULL,
+    puntaje numeric(7,4) NOT NULL,
+    fecha_creacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT calificaciones_pkey PRIMARY KEY (id),
+    CONSTRAINT uq_calificaciones UNIQUE (cedula_jurado, cedula_participan, evento_id, categoria_id),
+    CONSTRAINT fk_categoria_calificaciones FOREIGN KEY (categoria_id)
+        REFERENCES public.categorias (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_cedula_jurado_calificaciones FOREIGN KEY (cedula_jurado)
+        REFERENCES public.jurados (cedula) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_cedula_participan_calificaciones FOREIGN KEY (cedula_participan)
+        REFERENCES public.participantes (cedula) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_evento_calificaciones FOREIGN KEY (evento_id)
+        REFERENCES public.eventos (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.calificaciones
+    OWNER to usuario_api;
